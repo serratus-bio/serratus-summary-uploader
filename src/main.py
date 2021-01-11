@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 root_dir = 'out'
-family_dir = os.path.join(root_dir, 'families')
-sequence_dir = os.path.join(root_dir, 'sequences')
+family_dir = os.path.join(root_dir, 'family')
+sequence_dir = os.path.join(root_dir, 'sequence')
 Path(root_dir).mkdir(parents=True, exist_ok=True)
 Path(family_dir).mkdir(parents=True, exist_ok=True)
 Path(sequence_dir).mkdir(parents=True, exist_ok=True)
