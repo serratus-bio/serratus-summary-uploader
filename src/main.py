@@ -30,3 +30,5 @@ for sequence in summary.sequences:
     out_fp = os.path.join(out_dir, out_fn)
     with open(out_fp, 'w') as f:
         json.dump(sequence, f)
+
+# TODO: summary.properties
