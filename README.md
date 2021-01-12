@@ -21,3 +21,4 @@ For each SRA run processed by Serratus:
 
 - parallelize download/parse/upload (via `NextContinuationToken`)
 - check if a run is already uploaded (presence of `serratus-athena/run/<RUN>.json`)
+- deploy on AWS (EC2, Batch, Fargate, Lambda, etc.?)
