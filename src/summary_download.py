@@ -1,6 +1,6 @@
 import boto3
-import os
 import io
+import os
 s3 = boto3.client('s3')
 
 summary_bucket = 'lovelywater'

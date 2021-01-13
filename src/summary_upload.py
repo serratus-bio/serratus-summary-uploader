@@ -13,6 +13,11 @@ def upload_summary(summary):
     upload_families(summary)
     # upload_sequences(summary)
 
+def upload_properties(summary):
+    object_name = f'{upload_dir_run}/{summary.run_id}.json'
+    json_str = json.dumps(summary.properties)
+    upload_json(json_str, object_name)
+
 def upload_families(summary):
     for family in summary.families:
         object_name = f'{upload_dir_family}/{summary.run_id}_{family["fam"]}.json'
@@ -25,13 +30,6 @@ def upload_sequences(summary):
         json_str = json.dumps(sequence)
         upload_json(json_str, object_name)
 
-def upload_properties(summary):
-    object_name = f'{upload_dir_run}/{summary.run_id}.json'
-    json_str = json.dumps(summary.properties)
-    upload_json(json_str, object_name)
-
 def upload_json(json_str, object_name):
-    with io.BytesIO() as f:
-        f.write(json_str.encode())
-        f.seek(0)
+    with io.BytesIO(json_str.encode()) as f:
         s3.upload_fileobj(f, upload_bucket, object_name)

@@ -1,6 +1,6 @@
-import io
 from summary_download import get_summary_text
-from summary_parse import parse
+from summary_parse import parse_summary
+from summary_upload import upload_summary
 
 class Summary(object):
 
@@ -12,7 +12,10 @@ class Summary(object):
     def __init__(self, run_id):
         self.run_id = run_id
         summary_text = get_summary_text(run_id)
-        parse(self, io.StringIO(summary_text))
+        parse_summary(self, summary_text)
+
+    def upload(self):
+        upload_summary(self)
 
     def __str__(self):
         return self.run_id
