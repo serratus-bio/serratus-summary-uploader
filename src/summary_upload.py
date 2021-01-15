@@ -11,7 +11,7 @@ upload_dir_sequence = 'sequence'
 
 def upload_summary(summary):
     upload_families(summary)
-    # upload_sequences(summary)
+    upload_sequences(summary)
     upload_properties(summary)
 
 def upload_families(summary):
