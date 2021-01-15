@@ -33,7 +33,7 @@ def upload_properties(summary):
 
 def upload_json(json_str, object_name):
     with io.BytesIO(json_str.encode()) as f:
-        s3.upload_fileobj(f, upload_bucket, object_name)
+        s3.upload_fileobj(f, upload_bucket, object_name, ExtraArgs={'ACL': 'public-read'})
 
 def already_uploaded(run_id):
     object_name = f'{upload_dir_run}/{run_id}.json'
