@@ -1,26 +1,26 @@
 import io
 
 def parse_summary(summary, summary_text):
-    with io.StringIO(summary_text) as fs:
-        comment_line = next(fs)
-        summary.properties = parse_comment_line(comment_line)
-        summary.run_id = summary.properties['sra']
-        line = next(fs)
-        summary.families = []
-        while line.startswith('famcvg'):
-            d = parse_family_line(line)
-            d['run'] = summary.run_id
-            summary.families.append(d)
+    try:
+        with io.StringIO(summary_text) as fs:
+            comment_line = next(fs)
+            summary.properties = parse_comment_line(comment_line)
+            summary.run_id = summary.properties['sra']
             line = next(fs)
-        summary.sequences = []
-        while line.startswith('seqcvg'):
-            d = parse_sequence_line(line)
-            d['run'] = summary.run_id
-            summary.sequences.append(d)
-            try:
+            summary.families = []
+            while line.startswith('famcvg'):
+                d = parse_family_line(line)
+                d['run'] = summary.run_id
+                summary.families.append(d)
                 line = next(fs)
-            except StopIteration:
-                break
+            summary.sequences = []
+            while line.startswith('seqcvg'):
+                d = parse_sequence_line(line)
+                d['run'] = summary.run_id
+                summary.sequences.append(d)
+                line = next(fs)
+    except StopIteration:
+        return
 
 def parse_comment_line(line):
     return dict([pair.split('=') for pair in
