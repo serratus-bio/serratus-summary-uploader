@@ -12,7 +12,10 @@ class Summary(object):
     def __init__(self, run_id):
         self.run_id = run_id
         summary_text = get_summary_text(run_id)
-        parse_summary(self, summary_text)
+        try:
+            parse_summary(self, summary_text)
+        except Exception as e:
+            raise ValueError(f'Failed to parse {run_id}: {e}') from e
 
     def upload(self):
         upload_summary(self)
