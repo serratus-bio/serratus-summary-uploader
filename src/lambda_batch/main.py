@@ -2,14 +2,10 @@ import boto3
 import json
 s3 = boto3.resource('s3')
 
-other_function_name = 'lambda-test'
-
 MINIMUN_REMAINING_TIME_MS = 10000
 
 def handler(event, context):
-    bucket = 'serratus-athena'
-    index_file = 'index100.txt'
-    s3_object = s3.Object(bucket_name=bucket, key=index_file)
+    s3_object = s3.Object(bucket_name=event['index_bucket'], key=event['index_file'])
     offset = event.get('offset', 0)
 
     response = s3_object.get(Range=f'bytes={offset}-')
@@ -22,7 +18,7 @@ def handler(event, context):
         if run_id == '':
             raise ValueError('bad line')
         new_event = { 'run': run_id }
-        invoke_lambda(other_function_name, new_event)
+        invoke_lambda(event['single_upload_lambda'], new_event)
         n_runs_processed += 1
         offset_update += len(line) + 1  # \n
         if context.get_remaining_time_in_millis() < MINIMUN_REMAINING_TIME_MS:
