@@ -15,7 +15,7 @@ class Summary(object):
         try:
             parse_summary(self, summary_text)
         except Exception as e:
-            raise ValueError(f'Failed to parse {run_id}: {e}') from e
+            raise ValueError(f'Failed to parse {run_id}: {e!r}') from e
 
     def upload(self):
         upload_summary(self)
