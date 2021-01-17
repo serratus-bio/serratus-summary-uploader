@@ -4,9 +4,9 @@ COMMENT_KEYS = {'readlength', 'sra', 'genome', 'version', 'date'}
 FAM_KEYS = {'famcvg', 'fam', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'}
 SEQ_KEYS = {'seqcvg', 'seq', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'}
 
-def parse_summary(summary, summary_text):
+def parse_summary(summary):
     try:
-        with io.StringIO(summary_text) as fs:
+        with io.StringIO(summary.text) as fs:
             comment_line = next(fs)
             summary.properties = parse_comment_line(comment_line)
             summary.run_id = summary.properties['sra']

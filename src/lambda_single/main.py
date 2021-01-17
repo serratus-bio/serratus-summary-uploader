@@ -8,7 +8,7 @@ def handler(event, context):
     summary = Summary(run_id)
     if (summary.already_uploaded()):
         return { 'message' : f'{run_id} already processed' }
-    summary.upload()
+    summary.process()
     return {
         'run' : run_id,
         'time' : time.time() - start_time,
