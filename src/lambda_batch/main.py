@@ -1,20 +1,19 @@
 import boto3
 import json
 s3 = boto3.resource('s3')
+lambda_client = boto3.client('lambda')
 
 MINIMUN_REMAINING_TIME_MS = 10000
 
 def handler(event, context):
     s3_object = s3.Object(bucket_name=event['index_bucket'], key=event['index_file'])
     offset = event.get('offset', 0)
-
     response = s3_object.get(Range=f'bytes={offset}-')
 
     n_runs_processed = 0
     offset_update = 0
     for line in response['Body'].iter_lines():
         run_id = line.decode('utf-8')
-        print(run_id)
         if run_id == '':
             raise ValueError('bad line')
         new_event = { 'run': run_id }
@@ -41,8 +40,7 @@ def handler(event, context):
 # https://medium.com/swlh/processing-large-s3-files-with-aws-lambda-2c5840ae5c91
 def invoke_lambda(function_name, event):
     payload = json.dumps(event).encode('utf-8')
-    client = boto3.client('lambda')
-    response = client.invoke(
+    lambda_response = lambda_client.invoke(
         FunctionName=function_name,
         InvocationType='Event',
         Payload=payload
