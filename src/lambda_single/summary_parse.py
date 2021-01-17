@@ -1,5 +1,9 @@
 import io
 
+COMMENT_KEYS = {'readlength', 'sra', 'genome', 'version', 'date'}
+FAM_KEYS = {'famcvg', 'fam', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'}
+SEQ_KEYS = {'seqcvg', 'seq', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'}
+
 def parse_summary(summary, summary_text):
     try:
         with io.StringIO(summary_text) as fs:
@@ -21,11 +25,14 @@ def parse_summary(summary, summary_text):
         return
 
 def parse_comment_line(line):
-    return dict([pair.split('=') for pair in
+    d = dict([pair.split('=') for pair in
         line.replace('SUMZER_COMMENT=', '')
         .rstrip(';\n')
         .replace(';', ',')
         .split(',')])
+    if (set(d) != COMMENT_KEYS):
+        raise ValueError(f'Expected {SEQ_KEYS}, got {set(d1)}')
+    return d
 
 def parse_generic_line(line):
     return dict([pair.split('=') for pair in line.rstrip(';\n').split(';')])
@@ -36,6 +43,8 @@ def parse_family_line(line):
     d1 = parse_generic_line(line[:name_index])
     d2 = dict([line[name_index:].strip(';\n').split('=', maxsplit=1)])
     d1.update(d2)
+    if (set(d1) != FAM_KEYS):
+        raise ValueError(f'Expected {SEQ_KEYS}, got {set(d1)}')
     return d1
 
 def parse_sequence_line(line):
@@ -44,4 +53,6 @@ def parse_sequence_line(line):
     d1 = parse_generic_line(line[:name_index])
     d2 = dict([line[name_index:].strip(';\n').split('=', maxsplit=1)])
     d1.update(d2)
+    if (set(d1) != SEQ_KEYS):
+        raise ValueError(f'Expected {SEQ_KEYS}, got {set(d1)}')
     return d1
