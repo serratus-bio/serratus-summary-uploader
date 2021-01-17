@@ -4,10 +4,10 @@ from summary_upload import upload_summary, already_uploaded
 
 class Summary(object):
 
-    properties = None
-    families = None
-    sequences = None
-    run_id = None
+    properties = {}
+    families = []
+    sequences = []
+    run_id = ''
 
     def __init__(self, run_id):
         self.run_id = run_id

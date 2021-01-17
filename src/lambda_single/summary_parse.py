@@ -7,13 +7,11 @@ def parse_summary(summary, summary_text):
             summary.properties = parse_comment_line(comment_line)
             summary.run_id = summary.properties['sra']
             line = next(fs)
-            summary.families = []
             while line.startswith('famcvg'):
                 d = parse_family_line(line)
                 d['run'] = summary.run_id
                 summary.families.append(d)
                 line = next(fs)
-            summary.sequences = []
             while line.startswith('seqcvg'):
                 d = parse_sequence_line(line)
                 d['run'] = summary.run_id
