@@ -1,40 +1,51 @@
 import boto3
 import json
+import os
 s3 = boto3.resource('s3')
 lambda_client = boto3.client('lambda')
 
+WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
+INDEX_BUCKET = os.environ['INDEX_BUCKET']
+INDEX_FILE = os.environ['INDEX_FILE']
 MINIMUN_REMAINING_TIME_MS = 10000
+s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
+
+seed_event_keys = {
+    'start_byte'
+}
 
 def handler(event, context):
-    s3_object = s3.Object(bucket_name=event['index_bucket'], key=event['index_file'])
-    offset = event.get('offset', 0)
-    response = s3_object.get(Range=f'bytes={offset}-')
+    if set(event) == seed_event_keys:
+        return seed_handler(event, context)
+    else:
+        raise ValueError('Invalid event keys.')
 
-    n_runs_processed = 0
-    offset_update = 0
+def seed_handler(event, context):
+    start_byte = event.get('start_byte', 0)
+    response = s3_object.get(Range=f'bytes={start_byte}-')
+    n_workers_invoked = 0
+    next_start_byte = start_byte
     for line in response['Body'].iter_lines():
         run_id = line.decode('utf-8')
         if run_id == '':
             raise ValueError('bad line')
         new_event = { 'run': run_id }
-        invoke_lambda(event['single_upload_lambda'], new_event)
-        n_runs_processed += 1
-        offset_update += len(line) + 1  # \n
+        invoke_lambda(WORKER_LAMBDA, new_event)
+        n_workers_invoked += 1
+        next_start_byte += len(line) + 1  # \n
         if context.get_remaining_time_in_millis() < MINIMUN_REMAINING_TIME_MS:
             break
 
-    new_offset = offset + offset_update
-    if event['continue'] and new_offset < s3_object.content_length:
+    if next_start_byte < s3_object.content_length:
         new_event = {
-            **event,
-            'offset': new_offset,
-            'continue': True
+            'start_byte': next_start_byte
         }
         invoke_lambda(context.function_name, new_event)
     return {
-        'start_offset': offset,
-        'next_offset': new_offset,
-        'n_runs_processed'  : n_runs_processed
+        'content_length': s3_object.content_length,
+        'start_byte': start_byte,
+        'next_start_byte': next_start_byte,
+        'n_workers_invoked'  : n_workers_invoked
     }
 
 # https://medium.com/swlh/processing-large-s3-files-with-aws-lambda-2c5840ae5c91
