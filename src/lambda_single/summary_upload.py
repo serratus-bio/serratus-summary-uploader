@@ -43,4 +43,4 @@ def already_uploaded(run_id):
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             return False
-    raise Exception('unknown response')
+        raise ex
