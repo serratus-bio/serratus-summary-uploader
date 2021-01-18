@@ -11,13 +11,17 @@ MINIMUN_REMAINING_TIME_MS = 10000
 MAX_LINES_PER_BRANCH = 1000
 s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
 
+seed_event_keys = {
+    'start_byte'
+}
+
 branch_event_keys = {
     'start_byte',
     'end_byte'
 }
 
 def handler(event, context):
-    if set(event) == set():
+    if set(event) <= seed_event_keys:
         return seed_handler(event, context)
     if set(event) == branch_event_keys:
         return branch_handler(event, context)
@@ -33,7 +37,7 @@ def seed_handler(event, context):
         run_id = line.decode('utf-8')
         n_lines += 1
         next_start_byte += len(line) + 1  # \n
-        if n_lines > MAX_LINES_PER_BRANCH:
+        if n_lines >= MAX_LINES_PER_BRANCH:
             break
         if context.get_remaining_time_in_millis() < MINIMUN_REMAINING_TIME_MS:
             break
