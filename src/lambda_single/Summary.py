@@ -4,18 +4,28 @@ from summary_upload import upload_summary, already_uploaded
 
 class Summary(object):
 
-    properties = None
-    families = None
-    sequences = None
-    run_id = None
+    properties = {}
+    families = []
+    sequences = []
+    run_id = ''
+    text = ''
 
     def __init__(self, run_id):
         self.run_id = run_id
-        summary_text = get_summary_text(run_id)
+
+    def process(self):
+        self.download()
+        self.parse()
+        self.upload()
+
+    def download(self):
+        self.text = get_summary_text(self.run_id)
+
+    def parse(self):
         try:
-            parse_summary(self, summary_text)
+            parse_summary(self)
         except Exception as e:
-            raise ValueError(f'Failed to parse {run_id}: {e}') from e
+            raise ValueError(f'Failed to parse {self.run_id}: {e!r}') from e
 
     def upload(self):
         upload_summary(self)

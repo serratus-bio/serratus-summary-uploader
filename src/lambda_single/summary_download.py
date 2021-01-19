@@ -2,7 +2,7 @@ import boto3
 import io
 s3 = boto3.client('s3')
 
-summary_bucket = 'lovelywater'
+summary_bucket = 'serratus-athena'
 summary_dir = 'summary2'
 summary_suffix = '.summary'
 

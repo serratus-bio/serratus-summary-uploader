@@ -1,8 +1,15 @@
 import boto3
 import io
 import json
+from botocore.config import Config
 from botocore.exceptions import ClientError
-s3 = boto3.client('s3')
+config = Config(
+   retries = {
+      'max_attempts': 10,
+      'mode': 'standard'
+   }
+)
+s3 = boto3.client('s3', config=config)
 
 upload_bucket = 'serratus-athena'
 upload_dir_run = 'run'
@@ -43,4 +50,4 @@ def already_uploaded(run_id):
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             return False
-    raise Exception('unknown response')
+        raise ex
