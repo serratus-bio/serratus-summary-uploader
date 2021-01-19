@@ -8,11 +8,7 @@ def handler(event, context):
     summary = Summary(run_id)
     if (summary.already_uploaded()):
         print(f'[run={run_id}] Already processed. Skipping.')
+        return
     summary.process()
     print(f'[run={run_id}] Done processing. Time: {time.time() - start_time}, Families: {len(summary.families)}, Sequences: {len(summary.sequences)}')
-    return {
-        'run' : run_id,
-        'time' : time.time() - start_time,
-        'families' : len(summary.families),
-        'sequences' : len(summary.sequences)
-    }
+    return
