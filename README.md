@@ -24,12 +24,30 @@ For each SRA run processed by Serratus:
 
 `batch` iterates over `s3://serratus-athena/index.txt` and calls `single` per line (`run_id`).
 
-#### Configuration
+#### Batch lambda
 
-- Max 15min timeout
-- Create new roles with names
-    - `serratus-summary-uploader-batch-role`
-    - `serratus-summary-uploader-single-role`
+- Role: `serratus-summary-uploader-batch-role`
+- Environment variables
+    ```json
+    {
+        "WORKER_LAMBDA": "serratus-summary-uploader-single",
+        "INDEX_BUCKET": "serratus-athena",
+        "INDEX_FILE": "index.txt"
+    }
+    ```
+- Timeout: 15m
+- Concurrency: unreserved
+- Retry attempts: 0
+
+#### Worker lambda
+
+- Role: `serratus-summary-uploader-single-role`
+- Environment variables
+    ```json
+    {}
+    ```
+- Timeout: 15m
+- Concurrency: unreserved
 
 ### S3
 
@@ -113,6 +131,9 @@ Name: `InvokeFunctionInAccount`
 ### TODO
 
 - assert schema while parsing
+- rename `single` to `worker`
+- optimize `batch`
+    - recursive divide/conquer
 - `psummary` files
 
 ### Sources of inspiration
@@ -127,4 +148,14 @@ Name: `InvokeFunctionInAccount`
 ```sh
 # force reprocessing
 aws s3 rm s3://serratus-athena/run/ --recursive
+
+# sync summary2
+aws s3 sync s3://lovelywater/summary2/ s3://serratus-athena/summary2/ --include "*" --quiet
 ```
+
+### Lambda Throttling
+
+- Select **Throttle** in UI and confirm
+- Asynchronous invocation:
+    - Maximum age of event: `0h 1m 0s`
+    - Retry attempts: `0`
