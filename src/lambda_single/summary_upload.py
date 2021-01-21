@@ -12,9 +12,15 @@ config = Config(
 s3 = boto3.client('s3', config=config)
 
 upload_bucket = 'serratus-athena'
-upload_dir_run = 'run'
-upload_dir_family = 'family'
-upload_dir_sequence = 'sequence'
+upload_dir_run = 'run2'
+upload_dir_family = 'family2'
+upload_dir_sequence = 'sequence2'
+
+col_fam = 'fam'
+col_seq = 'seq'
+col_seq_fam = 'family'
+col_score = 'score'
+col_pctid = 'pctid'
 
 def upload_summary(summary):
     upload_families(summary)
@@ -23,13 +29,22 @@ def upload_summary(summary):
 
 def upload_families(summary):
     for family in summary.families:
-        object_name = f'{upload_dir_family}/{summary.run_id}_{family["fam"]}.json'
+        object_name = (f'{upload_dir_family}/' +
+            f'{col_fam}={family[col_fam]}/' +
+            f'{col_score}={family[col_score]}/' +
+            f'{col_pctid}={family[col_pctid]}/' +
+            f'{summary.run_id}_{family[col_fam]}.json')
         json_str = json.dumps(family)
         upload_json(json_str, object_name)
 
 def upload_sequences(summary):
     for sequence in summary.sequences:
-        object_name = f'{upload_dir_sequence}/{summary.run_id}_{sequence["seq"]}.json'
+        object_name = (f'{upload_dir_sequence}/' +
+            f'{col_seq_fam}={sequence[col_seq_fam]}/' +
+            f'{col_seq}={sequence[col_seq]}/' +
+            f'{col_score}={sequence[col_score]}/' +
+            f'{col_pctid}={sequence[col_pctid]}/' +
+            f'{summary.run_id}_{sequence[col_seq]}.json')
         json_str = json.dumps(sequence)
         upload_json(json_str, object_name)
 
