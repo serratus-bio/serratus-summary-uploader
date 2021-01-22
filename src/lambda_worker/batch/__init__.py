@@ -16,10 +16,12 @@ class SummaryBatch(object):
 
     def process(self):
         # self.prune()
+        print('parsing summaries')
         for summary in self.summary_objects:
             summary.process()
             self.fams += summary.fams
             self.seqs += summary.seqs
+        print('uploading')
         self.upload_fams()
         # upload_index(self)
 

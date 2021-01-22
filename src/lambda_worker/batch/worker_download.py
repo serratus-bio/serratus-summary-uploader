@@ -2,7 +2,7 @@ import boto3
 s3 = boto3.resource('s3')
 
 INDEX_BUCKET = 'serratus-athena'
-INDEX_FILE = 'index100.txt'
+INDEX_FILE = 'index5000.txt'
 s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
 
 def get_run_ids(start_byte, end_byte):
