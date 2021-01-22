@@ -3,18 +3,12 @@ from .summary_parse import parse_summary
 
 class Summary(object):
 
-    properties = {}
-    fams = []
-    seqs = []
-    run_id = ''
-    text = ''
-
     def __init__(self, run_id):
         self.run_id = run_id
-
-    def process(self):
-        self.download()
-        self.parse()
+        self.text = ''
+        self.props = {}
+        self.fams = []
+        self.seqs = []
 
     def download(self):
         self.text = get_summary_text(self.run_id)

@@ -7,34 +7,41 @@ lambda_client = boto3.client('lambda')
 WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
 INDEX_FILE = os.environ['INDEX_FILE']
-MINIMUN_REMAINING_TIME_MS = 10000
-MAX_LINES_PER_BRANCH = 1000
+MAX_LINES_PER_WORKER = 1000
 s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
 
 def handler(event, context):
-    if set(event) <= {'start_byte'}:
-        return seed_handler(event, context)
+    if set(event) <= {'start_byte', 'clear'}:
+        return batch_handler(event, context)
     else:
         raise ValueError('Invalid event keys.')
 
-def seed_handler(event, context):
+def batch_handler(event, context):
     start_byte = event.get('start_byte', 0)
+    clear = event.get('clear', False)
     response = s3_object.get(Range=f'bytes={start_byte}-')
     next_start_byte = start_byte
     n_lines = 0
     for line in response['Body'].iter_lines():
         n_lines += 1
         next_start_byte += len(line) + 1  # \n
-        if n_lines >= MAX_LINES_PER_BRANCH:
-            break
-        if context.get_remaining_time_in_millis() < MINIMUN_REMAINING_TIME_MS:
+        if n_lines >= MAX_LINES_PER_WORKER:
             break
 
-    # invoke branch
-    invoke_lambda(WORKER_LAMBDA, { 'start_byte': start_byte, 'end_byte': next_start_byte - 1 })
+    # invoke worker
+    worker_event = {
+        'start_byte': start_byte,
+        'end_byte': next_start_byte - 1,
+        'clear': clear
+    }
+    invoke_lambda(WORKER_LAMBDA, worker_event)
+    
+    # invoke next batch
     if next_start_byte < s3_object.content_length:
         invoke_lambda(context.function_name, { 'start_byte': next_start_byte })
     log = {
+        'start_byte': start_byte,
+        'next_start_byte': next_start_byte,
         'n_lines': n_lines
     }
     print(log)

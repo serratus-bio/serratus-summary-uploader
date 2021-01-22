@@ -44,7 +44,10 @@ For each SRA run processed by Serratus:
 - Role: `serratus-summary-uploader-single-role`
 - Environment variables
     ```json
-    {}
+    {
+        "INDEX_BUCKET": "serratus-athena",
+        "INDEX_FILE": "index.txt"
+    }
     ```
 - Timeout: 15m
 - Memory: 10240MB (max)
@@ -163,10 +166,7 @@ Name: `Glue`
 
 ### TODO
 
-- `batch`: fix last file in index not being processed
 - rename `single` to `worker`
-- optimize `batch`
-    - recursive divide/conquer
 - `psummary` files
 
 ### Sources of inspiration

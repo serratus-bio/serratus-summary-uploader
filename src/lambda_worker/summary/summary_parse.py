@@ -10,8 +10,8 @@ def parse_summary(summary):
     try:
         with io.StringIO(summary.text) as fs:
             comment_line = next(fs)
-            summary.properties = parse_comment_line(comment_line)
-            summary.run_id = summary.properties['sra']
+            summary.props = parse_comment_line(comment_line)
+            summary.run_id = summary.props['sra']
             line = next(fs)
             while line.startswith('famcvg'):
                 d = parse_family_line(line)
