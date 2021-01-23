@@ -1,5 +1,5 @@
 from .summary_download import get_summary_text
-from .summary_parse import parse_summary
+from .parse import parse_summary
 from botocore.exceptions import ClientError
 
 class Summary(object):
@@ -8,8 +8,8 @@ class Summary(object):
         self.sra_id = sra_id
         self.text = ''
         self.props = {}
-        self.fams = []
-        self.seqs = []
+        self.sections = {}
+        self.parsed = False
 
     def download(self):
         try:
@@ -20,10 +20,12 @@ class Summary(object):
     def parse(self):
         try:
             parse_summary(self)
+            self.parsed = True
         except Exception as e:
             raise ValueError(f'Failed to parse {self.sra_id}: {e!r}') from e
 
     def __repr__(self):
-        if self.fams and self.seqs:
-            return f'Summary(sra={self.sra_id}, fams={len(self.fams)}, seqs={len(self.seqs)})'
+        if self.parsed:
+            section_info = ''.join(self.sections)
+            return f'Summary(sra={self.sra_id}, sections={"todo"})'
         return f'Summary(sra={self.sra_id})'
