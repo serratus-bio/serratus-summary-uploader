@@ -21,11 +21,6 @@ class SummaryBatch(object):
         self.processed = True
         self.log(f'Finished {self}')
 
-    def prune(self):
-        self.summary_objects = [summary
-            for summary in self.summary_objects
-            if not already_uploaded(summary)]
-
     def parse(self):
         start_time = time.time()
         self.log('Parsing started')
