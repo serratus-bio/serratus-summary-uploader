@@ -34,6 +34,6 @@ class UploadTable(object):
             **self.projection_kwargs
         )
 
-    def delete(self):
+    def delete_existing(self):
         wr.catalog.delete_table_if_exists(database=athena_database, table=self.name)
         wr.s3.delete_objects(f's3://{upload_bucket}/{self.name}')

@@ -13,7 +13,7 @@ def handler(event, context):
     if (event['clear']):
         print('resetting tables and data')
         for table in NucleotideBatch([], 0).tables.values():
-            table.delete()
+            table.delete_existing()
     start_byte = event['start_byte']
     end_byte = event['end_byte']
     sra_ids = list(index.get_sra_ids(start_byte, end_byte))
