@@ -41,7 +41,6 @@ def parse_section_line(line, last_key, expected_keys):
         raise ValueError(f'Expected {expected_keys}, got {set(d1)}')
     return d1
 
-
 def parse_generic_line(line):
     d = dict([pair.split('=') for pair in line.rstrip(';\n').split(';')])
     for key in d:

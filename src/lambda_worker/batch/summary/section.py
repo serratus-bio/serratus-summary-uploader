@@ -1,20 +1,20 @@
-from .parse import parse_section_line
+from .parse import parse_section_line, parse_generic_line
 
 class SummarySection(object):
     
-    def __init__(self, name, keys, add_sra=False, last_item_any_char=False):
-        self.name = name
+    def __init__(self, keys, last_item_any_char=False):
         self.keys = keys
-        self.add_sra = add_sra
         self.last_item_any_char = last_item_any_char
         self.entries = []
         self.keys_set = set(keys)
 
     def __repr__(self):
-        return f'SummarySection(name={self.name}, entries={len(self.entries)})'
+        return f'SummarySection(n={len(self.entries)})'
 
     def parse(self, line):
-        return parse_section_line(line, self.keys[-1], self.keys_set)
+        if self.last_item_any_char:
+            return parse_section_line(line, self.keys[-1], self.keys_set)
+        return parse_generic_line(line)
 
     def add(self, line, extra_entries=None):
         d = self.parse(line)
