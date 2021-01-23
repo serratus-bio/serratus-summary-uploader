@@ -1,4 +1,4 @@
-from .summary_download import get_summary_text
+from .download import get_summary_text
 from .parse import parse_summary
 from botocore.exceptions import ClientError
 

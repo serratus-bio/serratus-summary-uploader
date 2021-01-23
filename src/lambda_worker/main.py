@@ -1,5 +1,5 @@
 import os
-from batch.worker_download import SummaryIndex
+from batch.download import SummaryIndex
 from batch.nucleotide import NucleotideBatch
 
 # INDEX_BUCKET = os.environ['INDEX_BUCKET']

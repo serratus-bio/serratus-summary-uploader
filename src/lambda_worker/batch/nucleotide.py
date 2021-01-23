@@ -1,6 +1,6 @@
 from . import SummaryBatch
 from .summary.nucleotide import NucleotideSummary
-from .uploadtable import UploadTable
+from .table import UploadTable
 
 class NucleotideBatch(SummaryBatch):
 
