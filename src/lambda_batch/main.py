@@ -7,7 +7,7 @@ lambda_client = boto3.client('lambda')
 WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
 INDEX_FILE = os.environ['INDEX_FILE']
-MAX_LINES_PER_WORKER = 1000
+MAX_LINES_PER_WORKER = 5000
 s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
 
 def handler(event, context):
