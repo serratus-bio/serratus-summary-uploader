@@ -1,5 +1,6 @@
 from .summary_download import get_summary_text
 from .summary_parse import parse_summary
+from botocore.exceptions import ClientError
 
 class Summary(object):
 
@@ -11,7 +12,10 @@ class Summary(object):
         self.seqs = []
 
     def download(self):
-        self.text = get_summary_text(self.run_id)
+        try:
+            self.text = get_summary_text(self.run_id)
+        except ClientError as e:
+                raise RuntimeError(f'[run={self.run_id}] {e!r}') from e
 
     def parse(self):
         try:
