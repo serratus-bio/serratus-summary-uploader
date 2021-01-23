@@ -1,5 +1,6 @@
 from . import Summary
 from .section import SummarySection
+from .download import get_nucleotide
 
 class NucleotideSummary(Summary):
 
@@ -19,3 +20,9 @@ class NucleotideSummary(Summary):
                 last_item_any_char=True
             )
         }
+
+    def download(self):
+        try:
+            self.text = get_nucleotide(self.sra_id)
+        except ClientError as e:
+            raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
