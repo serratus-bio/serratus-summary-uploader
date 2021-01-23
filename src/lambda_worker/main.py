@@ -15,7 +15,7 @@ def handler(event, context):
             table.delete()
     start_byte = event['start_byte']
     end_byte = event['end_byte']
-    run_ids = list(index.get_run_ids(start_byte, end_byte))
-    summary_batch = SummaryBatch(run_ids, start_byte)
+    sra_ids = list(index.get_sra_ids(start_byte, end_byte))
+    summary_batch = SummaryBatch(sra_ids, start_byte)
     summary_batch.process()
     return

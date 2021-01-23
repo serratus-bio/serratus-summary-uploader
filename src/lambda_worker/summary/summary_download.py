@@ -6,8 +6,8 @@ summary_bucket = 'serratus-athena'
 summary_dir = 'summary2'
 summary_suffix = '.summary'
 
-def get_summary_text(run_id):
-    file_key = f'{summary_dir}/{run_id}{summary_suffix}'
+def get_summary_text(sra_id):
+    file_key = f'{summary_dir}/{sra_id}{summary_suffix}'
 
     with io.BytesIO() as stream:
         s3.download_fileobj(summary_bucket, file_key, stream)

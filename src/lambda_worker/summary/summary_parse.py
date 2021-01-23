@@ -11,16 +11,16 @@ def parse_summary(summary):
         with io.StringIO(summary.text) as fs:
             comment_line = next(fs)
             summary.props = parse_comment_line(comment_line)
-            summary.run_id = summary.props['sra']
+            summary.sra_id = summary.props['sra']
             line = next(fs)
             while line.startswith('famcvg'):
                 d = parse_family_line(line)
-                d['run'] = summary.run_id
+                d['sra'] = summary.sra_id
                 summary.fams.append(d)
                 line = next(fs)
             while line.startswith('seqcvg'):
                 d = parse_sequence_line(line)
-                d['run'] = summary.run_id
+                d['sra'] = summary.sra_id
                 summary.seqs.append(d)
                 line = next(fs)
     except StopIteration:
