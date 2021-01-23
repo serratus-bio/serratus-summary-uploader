@@ -7,7 +7,6 @@ class Summary(object):
     def __init__(self, sra_id):
         self.sra_id = sra_id
         self.text = ''
-        self.props = {}
         self.sections = {}
         self.parsed = False
 

@@ -5,7 +5,7 @@ from .uploadtable import UploadTable
 class NucleotideBatch(SummaryBatch):
 
     def __init__(self, *args, **kwargs):
-        super(NucleotideBatch, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.summary_objects = [NucleotideSummary(sra_id) for sra_id in self.sra_ids]
         self.tables = {
             'sra': UploadTable(
@@ -40,8 +40,3 @@ class NucleotideBatch(SummaryBatch):
                 }
             )
         }
-
-    def __repr__(self):
-        if self.processed:
-            return f'SummaryBatch(sras={len(self.sra_ids)}, fams={len(self.tables["fam"].entries)}, seqs={len(self.tables["seq"].entries)})'
-        return f'SummaryBatch(sras={len(self.sra_ids)})'

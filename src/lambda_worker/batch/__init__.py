@@ -30,7 +30,7 @@ class SummaryBatch(object):
             summary.parse()
             self.tables['fam'].entries += summary.sections['fam'].entries
             self.tables['seq'].entries += summary.sections['seq'].entries
-            self.tables['sra'].entries.append(summary.props)
+            self.tables['sra'].entries += summary.sections['sra'].entries
         self.log(f'Parsing took {time.time() - start_time:.1f}s')
 
     def upload(self):
@@ -42,8 +42,8 @@ class SummaryBatch(object):
 
     def __repr__(self):
         if self.processed:
-            return f'SummaryBatch(sras={len(self.sra_ids)}, fams={len(self.tables["fam"].entries)}, seqs={len(self.tables["seq"].entries)})'
-        return f'SummaryBatch(sras={len(self.sra_ids)})'
+            return f'{self.__class__.__name__}(sras={len(self.sra_ids)}, fams={len(self.tables["fam"].entries)}, seqs={len(self.tables["seq"].entries)})'
+        return f'{self.__class__.__name__}(sras={len(self.sra_ids)})'
 
     def log(self, message):
         print(f'[id={self.log_id}] {message}')

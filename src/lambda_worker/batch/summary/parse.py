@@ -8,10 +8,13 @@ def parse_summary(summary):
     try:
         with io.StringIO(summary.text) as fs:
             line = next(fs)
-            summary.props = parse_comment_line(line)
-            summary.sra_id = summary.props['sra']
-            line = next(fs)
             for name, section in summary.sections.items():
+                # comment is first section, single line
+                if section.is_comment:
+                    section.add(line)
+                    summary.sra_id = section.entries[0]['sra']
+                    line = next(fs)
+                    continue
                 while line.startswith(section.keys[0]):
                     extra_entries = {
                         'sra': summary.sra_id
