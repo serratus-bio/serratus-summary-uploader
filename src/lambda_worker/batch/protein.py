@@ -15,7 +15,7 @@ class ProteinBatch(SummaryBatch):
             ),
             'fam': UploadTable(
                 name='pfamily',
-                cols=['fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -28,7 +28,7 @@ class ProteinBatch(SummaryBatch):
             ),
             'gen': UploadTable(
                 name='protein',
-                cols=['gen', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['sra', 'gen', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -41,7 +41,7 @@ class ProteinBatch(SummaryBatch):
             ),
             'seq': UploadTable(
                 name='psequence',
-                cols=['seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
