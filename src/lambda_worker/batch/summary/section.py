@@ -18,10 +18,10 @@ class SummarySection(object):
 
     def parse(self, line):
         if self.is_comment:
-            return parse_comment_line(line)
+            return parse_comment_line(line, self.keys_set)
         if self.last_item_any_char:
             return parse_section_line(line, self.keys[-1], self.keys_set)
-        return parse_generic_line(line)
+        return parse_generic_line(line, self.keys_set)
 
     def add(self, line, extra_entries=None):
         d = self.parse(line)

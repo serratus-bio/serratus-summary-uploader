@@ -1,5 +1,4 @@
 from .parse import parse_summary
-from botocore.exceptions import ClientError
 
 class Summary(object):
 

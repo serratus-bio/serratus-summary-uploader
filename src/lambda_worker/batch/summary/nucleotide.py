@@ -1,6 +1,7 @@
 from . import Summary
 from .section import SummarySection
 from .download import get_nucleotide
+from botocore.exceptions import ClientError
 
 class NucleotideSummary(Summary):
 

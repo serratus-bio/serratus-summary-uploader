@@ -1,37 +1,42 @@
 import io
 
-COMMENT_KEYS = {'readlength', 'sra', 'genome', 'version', 'date'}
 INT_KEYS = {'score', 'pctid', 'aln', 'glb', 'len', 'topscore', 'toplen'}
 DBL_KEYS = {'depth'}
 
 def parse_summary(summary):
+    prefix = summary.line_prefix_ignore
     try:
         with io.StringIO(summary.text) as fs:
-            line = next(fs)
+            line = get_next_line(fs, prefix)
             for name, section in summary.sections.items():
                 # comment is first section, single line
                 if section.is_comment:
                     section.add(line)
                     summary.sra_id = section.entries[0]['sra']
-                    line = next(fs)
+                    line = get_next_line(fs, prefix)
                     continue
                 while line.startswith(section.keys[0]):
                     extra_entries = {
                         'sra': summary.sra_id
                     }
                     section.add(line, extra_entries)
-                    line = next(fs)
+                    line = get_next_line(fs, prefix)
+            try:
+                next(fs)
+                raise ValueError('Did not parse all lines! Check section keys.')
+            except StopIteration:
+                pass # expected
     except StopIteration:
         return
 
-def parse_comment_line(line):
+def parse_comment_line(line, expected_keys):
     d = dict([pair.split('=') for pair in
         line.replace('SUMZER_COMMENT=', '')
         .rstrip(';\n')
         .replace(';', ',')
         .split(',')])
-    if (set(d) != COMMENT_KEYS):
-        raise ValueError(f'Expected {COMMENT_KEYS}, got {set(d1)}')
+    if (set(d) != expected_keys):
+        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
     return d
 
 def parse_section_line(line, last_key, expected_keys):
@@ -44,11 +49,22 @@ def parse_section_line(line, last_key, expected_keys):
         raise ValueError(f'Expected {expected_keys}, got {set(d1)}')
     return d1
 
-def parse_generic_line(line):
+def parse_generic_line(line, expected_keys):
     d = dict([pair.split('=') for pair in line.rstrip(';\n').split(';')])
     for key in d:
         if key in INT_KEYS:
             d[key] = int(d[key])
         elif key in DBL_KEYS:
             d[key] = float(d[key])
+    if (set(d) != expected_keys):
+        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
     return d
+
+# hack to remove prefix from each line in psummary
+def get_next_line(fs, prefix):
+    line = next(fs)
+    if prefix:
+        if not line.startswith(prefix):
+            raise ValueError(f'Line does not start with "{prefix}": {line}')
+        return line[len(prefix):]
+    return line

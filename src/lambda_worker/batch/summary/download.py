@@ -15,7 +15,7 @@ def get_nucleotide(sra_id):
     return get_file_contents(file_key)
 
 def get_protein(sra_id):
-    file_key = f'{nucleotide_dir}/{sra_id}{nucleotide_suffix}'
+    file_key = f'{protein_dir}/{sra_id}{protein_suffix}'
     return get_file_contents(file_key)
 
 def get_file_contents(file_key):

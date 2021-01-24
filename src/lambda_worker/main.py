@@ -1,28 +1,51 @@
 import os
 from batch.download import SummaryIndex
 from batch.nucleotide import NucleotideBatch
+from batch.protein import ProteinBatch
 
 # INDEX_BUCKET = os.environ['INDEX_BUCKET']
-# INDEX_FILE = os.environ['INDEX_FILE']
+# NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
+# PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
 INDEX_BUCKET = 'serratus-athena'
-INDEX_FILE = 'index1m.txt'
+NUCLEOTIDE_INDEX = 'index.txt'
+PROTEIN_INDEX = 'pindex.txt'
 
-index = SummaryIndex(INDEX_BUCKET, INDEX_FILE)
+nucleotide_index = SummaryIndex(INDEX_BUCKET, NUCLEOTIDE_INDEX)
+protein_index = SummaryIndex(INDEX_BUCKET, PROTEIN_INDEX)
 
 def handler(event, context):
+    if (event['type'] == 'nucleotide'):
+        return handler_nucleotide(event, context)
+    if (event['type'] == 'protein'):
+        return handler_protein(event, context)
+
+def handler_nucleotide(event, context):
     if (event['clear']):
         print('resetting tables and data')
         for table in NucleotideBatch([], 0).tables.values():
             table.delete_existing()
     start_byte = event['start_byte']
     end_byte = event['end_byte']
-    sra_ids = list(index.get_sra_ids(start_byte, end_byte))
-    summary_batch = NucleotideBatch(sra_ids, start_byte)
-    summary_batch.process()
+    sra_ids = list(nucleotide_index.get_sra_ids(start_byte, end_byte))
+    nucleotide_batch = NucleotideBatch(sra_ids, start_byte)
+    nucleotide_batch.process()
+    return
+
+def handler_protein(event, context):
+    if (event['clear']):
+        print('resetting tables and data')
+        for table in ProteinBatch([], 0).tables.values():
+            table.delete_existing()
+    start_byte = event['start_byte']
+    end_byte = event['end_byte']
+    sra_ids = list(protein_index.get_sra_ids(start_byte, end_byte))
+    protein_batch = ProteinBatch(sra_ids, start_byte)
+    protein_batch.process()
     return
 
 handler({
+    'type': 'protein',
     'start_byte': 0,
     'end_byte': 49,
-    'clear': True
+    'clear': False
 }, None)
