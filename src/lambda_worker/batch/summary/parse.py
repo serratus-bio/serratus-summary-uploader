@@ -1,6 +1,8 @@
 import io
 
 INT_KEYS = {'score', 'pctid', 'aln', 'glb', 'len', 'topscore', 'toplen'}
+INT_KEYS |= {'readlength', 'totalalns'} # protein summary comment
+INT_KEYS |= {'alns', 'avgcols'} # protein summary lines
 DBL_KEYS = {'depth'}
 
 def parse_summary(summary):
@@ -37,6 +39,7 @@ def parse_comment_line(line, expected_keys):
         .split(',')])
     if (set(d) != expected_keys):
         raise ValueError(f'Expected {expected_keys}, got {set(d)}')
+    cast_types(d)
     return d
 
 def parse_section_line(line, last_key, expected_keys):
@@ -51,14 +54,17 @@ def parse_section_line(line, last_key, expected_keys):
 
 def parse_generic_line(line, expected_keys):
     d = dict([pair.split('=') for pair in line.rstrip(';\n').split(';')])
+    if (set(d) != expected_keys):
+        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
+    cast_types(d)
+    return d
+
+def cast_types(d):
     for key in d:
         if key in INT_KEYS:
             d[key] = int(d[key])
         elif key in DBL_KEYS:
             d[key] = float(d[key])
-    if (set(d) != expected_keys):
-        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
-    return d
 
 # hack to remove prefix from each line in psummary
 def get_next_line(fs, prefix):

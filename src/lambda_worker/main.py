@@ -47,5 +47,5 @@ handler({
     'type': 'protein',
     'start_byte': 0,
     'end_byte': 49,
-    'clear': False
+    'clear': True
 }, None)

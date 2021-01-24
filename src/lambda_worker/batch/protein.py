@@ -9,13 +9,26 @@ class ProteinBatch(SummaryBatch):
         self.summary_objects = [ProteinSummary(sra_id) for sra_id in self.sra_ids]
         self.tables = {
             'sra': UploadTable(
-                name='sra4',
-                cols=['sra', 'readlength', 'genome', 'version', 'date'],
+                name='psra',
+                cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 projection_enabled=False
             ),
             'fam': UploadTable(
-                name='fam4',
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
+                name='pfamily',
+                cols=['fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                projection_enabled=True,
+                projection_types={
+                    'score': 'integer',
+                    'pctid':'integer'
+                },
+                projection_ranges={
+                    'score': '0,100',
+                    'pctid':'0,100'
+                }
+            ),
+            'gen': UploadTable(
+                name='protein',
+                cols=['gen', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -27,8 +40,8 @@ class ProteinBatch(SummaryBatch):
                 }
             ),
             'seq': UploadTable(
-                name='seq4',
-                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
+                name='psequence',
+                cols=['seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
