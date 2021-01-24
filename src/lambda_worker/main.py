@@ -3,12 +3,12 @@ from batch.download import SummaryIndex
 from batch.nucleotide import NucleotideBatch
 from batch.protein import ProteinBatch
 
-# INDEX_BUCKET = os.environ['INDEX_BUCKET']
-# NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
-# PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
-INDEX_BUCKET = 'serratus-athena'
-NUCLEOTIDE_INDEX = 'index.txt'
-PROTEIN_INDEX = 'pindex.txt'
+INDEX_BUCKET = os.environ['INDEX_BUCKET']
+NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
+PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
+# INDEX_BUCKET = 'serratus-athena'
+# NUCLEOTIDE_INDEX = 'index.txt'
+# PROTEIN_INDEX = 'pindex.txt'
 
 nucleotide_index = SummaryIndex(INDEX_BUCKET, NUCLEOTIDE_INDEX)
 protein_index = SummaryIndex(INDEX_BUCKET, PROTEIN_INDEX)
@@ -18,6 +18,7 @@ def handler(event, context):
         return handler_nucleotide(event, context)
     if (event['type'] == 'protein'):
         return handler_protein(event, context)
+    raise ValueError('Invalid type key')
 
 def handler_nucleotide(event, context):
     if (event['clear']):
@@ -42,10 +43,3 @@ def handler_protein(event, context):
     protein_batch = ProteinBatch(sra_ids, start_byte)
     protein_batch.process()
     return
-
-handler({
-    'type': 'protein',
-    'start_byte': 0,
-    'end_byte': 49,
-    'clear': True
-}, None)

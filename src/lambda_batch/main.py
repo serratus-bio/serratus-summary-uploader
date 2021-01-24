@@ -4,22 +4,26 @@ import os
 s3 = boto3.resource('s3')
 lambda_client = boto3.client('lambda')
 
-WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
-INDEX_FILE = os.environ['INDEX_FILE']
-MAX_LINES_PER_WORKER = 5000
-s3_object = s3.Object(bucket_name=INDEX_BUCKET, key=INDEX_FILE)
+NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
+PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
+
+WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
+MAX_LINES_PER_WORKER = 1000
+nucleotide_index = s3.Object(bucket_name=INDEX_BUCKET, key=NUCLEOTIDE_INDEX)
+protein_index = s3.Object(bucket_name=INDEX_BUCKET, key=PROTEIN_INDEX)
 
 def handler(event, context):
-    if set(event) <= {'start_byte', 'clear'}:
-        return batch_handler(event, context)
-    else:
-        raise ValueError('Invalid event keys.')
+    if (event['type'] == 'nucleotide'):
+        return batch_handler(event, context, nucleotide_index)
+    if (event['type'] == 'protein'):
+        return batch_handler(event, context, protein_index)
+    raise ValueError('Invalid type key')
 
-def batch_handler(event, context):
+def batch_handler(event, context, index_object):
     start_byte = event.get('start_byte', 0)
     clear = event.get('clear', False)
-    response = s3_object.get(Range=f'bytes={start_byte}-')
+    response = index_object.get(Range=f'bytes={start_byte}-')
     next_start_byte = start_byte
     n_lines = 0
     for line in response['Body'].iter_lines():
@@ -30,6 +34,7 @@ def batch_handler(event, context):
 
     # invoke worker
     worker_event = {
+        'type': event['type'],
         'start_byte': start_byte,
         'end_byte': next_start_byte - 1,
         'clear': clear
@@ -37,9 +42,14 @@ def batch_handler(event, context):
     invoke_lambda(WORKER_LAMBDA, worker_event)
     
     # invoke next batch
-    if next_start_byte < s3_object.content_length:
-        invoke_lambda(context.function_name, { 'start_byte': next_start_byte })
+    if next_start_byte < index_object.content_length:
+        next_event = {
+            'type': event['type'],
+            'start_byte': next_start_byte
+        }
+        invoke_lambda(context.function_name, next_event)
     log = {
+        'type': event['type'],
         'start_byte': start_byte,
         'next_start_byte': next_start_byte,
         'n_lines': n_lines
