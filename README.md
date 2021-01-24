@@ -44,10 +44,17 @@ For each SRA run processed by Serratus:
 - Role: `serratus-summary-uploader-single-role`
 - Environment variables
     ```json
-    {}
+    {
+        "INDEX_BUCKET": "serratus-athena",
+        "NUCLEOTIDE_INDEX": "index.txt",
+        "PROTEIN_INDEX": "pindex.txt"
+    }
     ```
 - Timeout: 15m
+- Memory: 10240MB (max)
 - Concurrency: unreserved
+- Layer:
+    - https://aws-data-wrangler.readthedocs.io/en/stable/install.html#aws-lambda-layer
 
 ### S3
 
@@ -126,14 +133,41 @@ Name: `InvokeFunctionInAccount`
 }
 ```
 
+Inline policy for `serratus-summary-uploader-single-role`:
+
+Name: `Glue`
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "glue:BatchCreatePartition",
+                "glue:GetDatabase",
+                "glue:GetPartition",
+                "glue:CreateTable",
+                "glue:CreateSchema",
+                "glue:DeleteTable",
+                "glue:CreatePartition",
+                "glue:GetSchema",
+                "glue:GetTable"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+- add `s3:*` for `clear()`
+
 ## Miscellaneous
 
 ### TODO
 
-- assert schema while parsing
 - rename `single` to `worker`
-- optimize `batch`
-    - recursive divide/conquer
 - `psummary` files
 
 ### Sources of inspiration
@@ -149,8 +183,15 @@ Name: `InvokeFunctionInAccount`
 # force reprocessing
 aws s3 rm s3://serratus-athena/run/ --recursive
 
-# sync summary2
+# sync
 aws s3 sync s3://lovelywater/summary2/ s3://serratus-athena/summary2/ --include "*" --quiet
+aws s3 sync s3://lovelywater/psummary/ s3://serratus-athena/psummary/ --include "*" --quiet
+
+# generate list
+sed 's/...............................//g' pindex.tsv | sed 's/.psummary//g' > pindex.txt
+
+# clean __pycache__
+find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 ```
 
 ### Lambda Throttling
