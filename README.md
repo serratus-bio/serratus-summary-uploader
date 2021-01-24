@@ -46,7 +46,8 @@ For each SRA run processed by Serratus:
     ```json
     {
         "INDEX_BUCKET": "serratus-athena",
-        "INDEX_FILE": "index.txt"
+        "NUCLEOTIDE_INDEX": "index.txt",
+        "PROTEIN_INDEX": "pindex.txt"
     }
     ```
 - Timeout: 15m
@@ -182,8 +183,15 @@ Name: `Glue`
 # force reprocessing
 aws s3 rm s3://serratus-athena/run/ --recursive
 
-# sync summary2
+# sync
 aws s3 sync s3://lovelywater/summary2/ s3://serratus-athena/summary2/ --include "*" --quiet
+aws s3 sync s3://lovelywater/psummary/ s3://serratus-athena/psummary/ --include "*" --quiet
+
+# generate list
+sed 's/...............................//g' pindex.tsv | sed 's/.psummary//g' > pindex.txt
+
+# clean __pycache__
+find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 ```
 
 ### Lambda Throttling
