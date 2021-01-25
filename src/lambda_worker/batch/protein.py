@@ -7,14 +7,19 @@ class ProteinBatch(SummaryBatch):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.summary_objects = [ProteinSummary(sra_id) for sra_id in self.sra_ids]
+        s3_dir = 'protein'
         self.tables = {
             'sra': UploadTable(
                 name='psra',
+                s3_name='sra',
+                s3_dir=s3_dir,
                 cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 projection_enabled=False
             ),
             'fam': UploadTable(
                 name='pfamily',
+                s3_name='family',
+                s3_dir=s3_dir,
                 cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
@@ -28,6 +33,8 @@ class ProteinBatch(SummaryBatch):
             ),
             'gen': UploadTable(
                 name='protein',
+                s3_name='protein',
+                s3_dir=s3_dir,
                 cols=['sra', 'gen', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
@@ -41,6 +48,8 @@ class ProteinBatch(SummaryBatch):
             ),
             'seq': UploadTable(
                 name='psequence',
+                s3_name='sequence',
+                s3_dir=s3_dir,
                 cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={

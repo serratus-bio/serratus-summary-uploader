@@ -7,7 +7,7 @@ parquet_mode = 'append'
 
 class UploadTable(object):
 
-    def __init__(self, name, cols, projection_enabled=False, projection_types=None, projection_ranges=None):
+    def __init__(self, name, s3_name, s3_dir, cols, projection_enabled=False, projection_types=None, projection_ranges=None):
         self.name = name
         self.cols = cols
         self.entries = []
@@ -22,11 +22,12 @@ class UploadTable(object):
                 'projection_ranges': self.projection_ranges,
                 'partition_cols': self.projection_types.keys()
             }
+        self.s3_path = f"s3://{upload_bucket}/{s3_dir}/{s3_name}/"
 
     def upload(self):
         wr.s3.to_parquet(
             df=pd.DataFrame(self.entries)[self.cols],
-            path=f"s3://{upload_bucket}/{self.name}/",
+            path=self.s3_path,
             dataset=True,
             mode=parquet_mode,
             database=athena_database,
@@ -36,4 +37,4 @@ class UploadTable(object):
 
     def delete_existing(self):
         wr.catalog.delete_table_if_exists(database=athena_database, table=self.name)
-        wr.s3.delete_objects(f's3://{upload_bucket}/{self.name}')
+        wr.s3.delete_objects(self.s3_path)
