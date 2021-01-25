@@ -22,7 +22,6 @@ def handler(event, context):
 
 def batch_handler(event, context, index_object):
     start_byte = event.get('start_byte', 0)
-    clear = event.get('clear', False)
     response = index_object.get(Range=f'bytes={start_byte}-')
     next_start_byte = start_byte
     n_lines = 0
@@ -36,8 +35,7 @@ def batch_handler(event, context, index_object):
     worker_event = {
         'type': event['type'],
         'start_byte': start_byte,
-        'end_byte': next_start_byte - 1,
-        'clear': clear
+        'end_byte': next_start_byte - 1
     }
     invoke_lambda(WORKER_LAMBDA, worker_event)
     

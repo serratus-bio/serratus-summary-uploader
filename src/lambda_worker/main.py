@@ -21,7 +21,7 @@ def handler(event, context):
     raise ValueError('Invalid type key')
 
 def handler_nucleotide(event, context):
-    if (event['clear']):
+    if (event.get('clear', False)):
         print('resetting tables and data')
         for table in NucleotideBatch([], 0).tables.values():
             table.delete_existing()
@@ -34,7 +34,7 @@ def handler_nucleotide(event, context):
     return
 
 def handler_protein(event, context):
-    if (event['clear']):
+    if (event.get('clear', False)):
         print('resetting tables and data')
         for table in ProteinBatch([], 0).tables.values():
             table.delete_existing()
