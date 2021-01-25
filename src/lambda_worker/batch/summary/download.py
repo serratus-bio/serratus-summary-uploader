@@ -1,8 +1,6 @@
-import boto3
-import io
-s3 = boto3.client('s3')
+import urllib
 
-bucket = 'serratus-athena'
+bucket = 'lovelywater'
 
 nucleotide_dir = 'summary2'
 nucleotide_suffix = '.summary'
@@ -19,6 +17,6 @@ def get_protein(sra_id):
     return get_file_contents(file_key)
 
 def get_file_contents(file_key):
-    with io.BytesIO() as stream:
-        s3.download_fileobj(bucket, file_key, stream)
-        return stream.getvalue().decode('UTF-8')
+    url = f'https://s3.amazonaws.com/{bucket}/{file_key}'
+    file_response = urllib.request.urlopen(url)
+    return file_response.read().decode('utf-8')
