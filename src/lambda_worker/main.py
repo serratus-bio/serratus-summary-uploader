@@ -7,7 +7,7 @@ INDEX_BUCKET = os.environ['INDEX_BUCKET']
 NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
 PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
 # INDEX_BUCKET = 'serratus-athena'
-# NUCLEOTIDE_INDEX = 'index.txt'
+# NUCLEOTIDE_INDEX = 'nindex.txt'
 # PROTEIN_INDEX = 'pindex.txt'
 
 nucleotide_index = SummaryIndex(INDEX_BUCKET, NUCLEOTIDE_INDEX)
@@ -25,6 +25,7 @@ def handler_nucleotide(event, context):
         print('resetting tables and data')
         for table in NucleotideBatch([], 0).tables.values():
             table.delete_existing()
+        return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
     sra_ids = list(nucleotide_index.get_sra_ids(start_byte, end_byte))
@@ -37,6 +38,7 @@ def handler_protein(event, context):
         print('resetting tables and data')
         for table in ProteinBatch([], 0).tables.values():
             table.delete_existing()
+        return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
     sra_ids = list(protein_index.get_sra_ids(start_byte, end_byte))
