@@ -9,12 +9,12 @@ class NucleotideBatch(SummaryBatch):
         self.summary_objects = [NucleotideSummary(sra_id) for sra_id in self.sra_ids]
         self.tables = {
             'sra': UploadTable(
-                name='sra4',
+                name='nsra',
                 cols=['sra', 'readlength', 'genome', 'version', 'date'],
                 projection_enabled=False
             ),
             'fam': UploadTable(
-                name='fam4',
+                name='nfamily',
                 cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
                 projection_enabled=True,
                 projection_types={
@@ -27,7 +27,7 @@ class NucleotideBatch(SummaryBatch):
                 }
             ),
             'seq': UploadTable(
-                name='seq4',
+                name='nsequence',
                 cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
                 projection_enabled=True,
                 projection_types={

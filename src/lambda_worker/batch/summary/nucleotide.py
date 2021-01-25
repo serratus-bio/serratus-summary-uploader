@@ -7,6 +7,7 @@ class NucleotideSummary(Summary):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.line_prefix_ignore = None
         self.sections = {
             'sra': SummarySection(
                 keys=['sra', 'readlength', 'genome', 'version', 'date'],
