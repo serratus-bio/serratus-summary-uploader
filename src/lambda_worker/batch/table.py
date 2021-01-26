@@ -25,9 +25,13 @@ class UploadTable(object):
         self.s3_path = f"s3://{upload_bucket}/{s3_dir}/{s3_name}/"
 
     def create_dataframe(self):
+        if not self.entries:
+            return
         self.df = pd.DataFrame(self.entries)[self.cols]
 
     def upload(self):
+        if not self.entries:
+            return
         wr.s3.to_parquet(
             df=self.df,
             path=self.s3_path,
