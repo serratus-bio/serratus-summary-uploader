@@ -1,3 +1,4 @@
+import time
 import urllib
 
 bucket = 'lovelywater'
@@ -18,5 +19,15 @@ def get_protein(sra_id):
 
 def get_file_contents(file_key):
     url = f'https://s3.amazonaws.com/{bucket}/{file_key}'
+    retry_count = 0
+    while retry_count < 5:
+        try:
+            return get_url_contents(url)
+        except ConnectionResetError:
+            retry_count += 1
+            time.sleep(2 ** retry_count)
+    return get_url_contents(url)
+
+def get_url_contents(url):
     file_response = urllib.request.urlopen(url)
     return file_response.read().decode('utf-8')
