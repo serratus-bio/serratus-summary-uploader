@@ -7,17 +7,18 @@ class NucleotideSummary(Summary):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.line_prefix_ignore = None
         self.sections = {
             'sra': SummarySection(
-                keys=['sra', 'readlength', 'genome', 'version', 'date'],
+                parse_keys=['sra', 'readlength', 'genome', 'version', 'date'],
                 is_comment=True
             ),
             'fam': SummarySection(
-                keys=['famcvg', 'fam', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
+                parse_keys=['famcvg', 'fam', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
                 last_item_any_char=True
             ),
             'seq': SummarySection(
-                keys=['seqcvg', 'seq', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
+                parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
                 last_item_any_char=True
             )
         }
