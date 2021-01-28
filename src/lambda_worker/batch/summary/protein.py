@@ -17,9 +17,7 @@ class ProteinSummary(Summary):
                 parse_keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols']
             ),
             'gen': ProteinGenSection(),
-            'seq': SummarySection(
-                parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols']
-            )
+            'seq': ProteinSeqSection()
         }
 
     def download(self):
@@ -37,6 +35,25 @@ class ProteinGenSection(SummarySection):
         )
 
     def expand_entries(self):
-        # gen=Hugephage.terminase --> fam=Hugephage;protein=terminase
+        # gen=Hugephage.terminase ->
+        #   fam=Hugephage
+        #   protein=terminase
         for entry in self.entries:
             entry['fam'], entry['protein'] = entry['gen'].split('.')
+
+
+class ProteinSeqSection(SummarySection):
+
+    def __init__(self):
+        super().__init__(
+            parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols']
+        )
+
+    def expand_entries(self):
+        # seq=Hugephage.capsid.187 ->
+        #   fam=Hugephage
+        #   protein=capsid
+        #   seq=187
+        for entry in self.entries:
+            # allow '.' in seq
+            entry['fam'], entry['protein'], entry['seq'] = entry['seq'].split('.', maxsplit=2)

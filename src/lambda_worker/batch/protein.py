@@ -50,7 +50,7 @@ class ProteinBatch(SummaryBatch):
                 name='psequence',
                 s3_name='sequence',
                 s3_dir=s3_dir,
-                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
