@@ -6,9 +6,6 @@ from batch.protein import ProteinBatch
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
 NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
 PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
-# INDEX_BUCKET = 'serratus-athena'
-# NUCLEOTIDE_INDEX = 'nindex.txt'
-# PROTEIN_INDEX = 'pindex.txt'
 
 nucleotide_index = SummaryIndex(INDEX_BUCKET, NUCLEOTIDE_INDEX)
 protein_index = SummaryIndex(INDEX_BUCKET, PROTEIN_INDEX)
