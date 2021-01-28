@@ -23,7 +23,7 @@ def get_file_contents(file_key):
     while retry_count < 5:
         try:
             return get_url_contents(url)
-        except ConnectionResetError:
+        except (ConnectionResetError, urllib.error.HTTPError):
             retry_count += 1
             time.sleep(2 ** retry_count)
     return get_url_contents(url)
