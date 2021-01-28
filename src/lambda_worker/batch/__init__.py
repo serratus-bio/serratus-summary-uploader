@@ -34,11 +34,11 @@ class SummaryBatch(object):
         self.log(f'Parsing took {time.time() - start_time:.1f}s')
 
     def create_dataframe(self):
+        start_time = time.time()
+        self.log(f'Dataframe creation started')
         for table in self.tables.values():
-            start_time = time.time()
-            self.log(f'Table {table.name} dataframe creation started')
             table.create_dataframe()
-            self.log(f'Table {table.name} dataframe creation took {time.time() - start_time:.1f}s')
+        self.log(f'Dataframe creation took {time.time() - start_time:.1f}s')
 
     def upload(self):
         for table in self.tables.values():
