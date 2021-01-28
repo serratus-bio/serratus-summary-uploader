@@ -13,6 +13,7 @@ class SummaryBatch(object):
         self.download()
         self.parse()
         self.create_dataframe()
+        # self.create_dynamodb_table()
         self.upload()
         self.processed = True
         self.log(f'Finished {self}')
@@ -40,11 +41,18 @@ class SummaryBatch(object):
             table.create_dataframe()
         self.log(f'Dataframe creation took {time.time() - start_time:.1f}s')
 
+    def create_dynamodb_table(self):
+        start_time = time.time()
+        self.log(f'Dynamodb table creation started')
+        for table in self.tables.values():
+            table.create_dynamodb_table()
+        self.log(f'Dynamodb table creation took {time.time() - start_time:.1f}s')
+
     def upload(self):
         for table in self.tables.values():
             start_time = time.time()
             self.log(f'Table {table.name} upload started')
-            table.upload()
+            table.upload_dynamodb()
             self.log(f'Table {table.name} upload took {time.time() - start_time:.1f}s')
 
     def __repr__(self):

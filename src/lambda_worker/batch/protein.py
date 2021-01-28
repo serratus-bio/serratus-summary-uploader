@@ -14,13 +14,15 @@ class ProteinBatch(SummaryBatch):
                 s3_name='sra',
                 s3_dir=s3_dir,
                 cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
+                partition_key='sra',
                 projection_enabled=False
             ),
             'fam': UploadTable(
                 name='pfamily',
                 s3_name='family',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['pkey', 'sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                partition_key='pkey',
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -35,7 +37,8 @@ class ProteinBatch(SummaryBatch):
                 name='protein',
                 s3_name='protein',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'protein', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['pkey', 'sra', 'fam', 'protein', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
+                partition_key='pkey',
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -50,7 +53,8 @@ class ProteinBatch(SummaryBatch):
                 name='psequence',
                 s3_name='sequence',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                cols=['pkey', 'sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
+                partition_key='pkey',
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',

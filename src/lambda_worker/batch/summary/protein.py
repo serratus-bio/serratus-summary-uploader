@@ -13,9 +13,7 @@ class ProteinSummary(Summary):
                 parse_keys=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 is_comment=True
             ),
-            'fam': SummarySection(
-                parse_keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols']
-            ),
+            'fam': ProteinFamSection(),
             'gen': ProteinGenSection(),
             'seq': ProteinSeqSection()
         }
@@ -26,6 +24,16 @@ class ProteinSummary(Summary):
         except ClientError as e:
             raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
 
+class ProteinFamSection(SummarySection):
+
+    def __init__(self):
+        super().__init__(
+            parse_keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols']
+        )
+
+    def expand_entries(self):
+        for entry in self.entries:
+            entry['pkey']= f"{entry['fam']}_{entry['sra']}"
 
 class ProteinGenSection(SummarySection):
 
@@ -39,6 +47,7 @@ class ProteinGenSection(SummarySection):
         #   fam=Hugephage
         #   protein=terminase
         for entry in self.entries:
+            entry['pkey']= f"{entry['gen']}_{entry['sra']}"
             entry['fam'], entry['protein'] = entry['gen'].split('.')
 
 
@@ -55,5 +64,6 @@ class ProteinSeqSection(SummarySection):
         #   protein=capsid
         #   seq=187
         for entry in self.entries:
+            entry['pkey']= f"{entry['seq']}_{entry['sra']}"
             # allow '.' in seq
             entry['fam'], entry['protein'], entry['seq'] = entry['seq'].split('.', maxsplit=2)
