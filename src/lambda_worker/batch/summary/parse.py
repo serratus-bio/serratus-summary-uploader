@@ -17,7 +17,7 @@ def parse_summary(summary):
                     summary.sra_id = section.entries[0]['sra']
                     line = get_next_line(fs, prefix)
                     continue
-                while line.startswith(section.keys[0]):
+                while line.startswith(section.parse_keys[0]):
                     extra_entries = {
                         'sra': summary.sra_id
                     }

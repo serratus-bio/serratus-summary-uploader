@@ -10,17 +10,15 @@ class ProteinSummary(Summary):
         self.line_prefix_ignore = f'sra={sra_id};'
         self.sections = {
             'sra': SummarySection(
-                keys=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
+                parse_keys=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 is_comment=True
             ),
             'fam': SummarySection(
-                keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols']
+                parse_keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols']
             ),
-            'gen': SummarySection(
-                keys=['gencvg', 'gen', 'score', 'pctid', 'alns', 'avgcols']
-            ),
+            'gen': ProteinGenSection(),
             'seq': SummarySection(
-                keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols']
+                parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols']
             )
         }
 
@@ -29,3 +27,16 @@ class ProteinSummary(Summary):
             self.text = get_protein(self.sra_id)
         except ClientError as e:
             raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
+
+
+class ProteinGenSection(SummarySection):
+
+    def __init__(self):
+        super().__init__(
+            parse_keys=['gencvg', 'gen', 'score', 'pctid', 'alns', 'avgcols']
+        )
+
+    def expand_entries(self):
+        # gen=Hugephage.terminase --> fam=Hugephage;protein=terminase
+        for entry in self.entries:
+            entry['fam'], entry['protein'] = entry['gen'].split('.')
