@@ -31,8 +31,8 @@ For each SRA run processed by Serratus:
     ```json
     {
         "WORKER_LAMBDA": "serratus-summary-uploader-single",
-        "INDEX_BUCKET": "serratus-athena",
-        "INDEX_FILE": "index.txt"
+        "NUCLEOTIDE_INDEX": "nindex.txt",
+        "PROTEIN_INDEX": "pindex.txt"
     }
     ```
 - Timeout: 15m
@@ -46,7 +46,7 @@ For each SRA run processed by Serratus:
     ```json
     {
         "INDEX_BUCKET": "serratus-athena",
-        "NUCLEOTIDE_INDEX": "index.txt",
+        "NUCLEOTIDE_INDEX": "nindex.txt",
         "PROTEIN_INDEX": "pindex.txt"
     }
     ```
@@ -167,8 +167,12 @@ Name: `Glue`
 
 ### TODO
 
+- bucketing for fast filtering by `sra`
+    - can't easily bucket w/ `awswrangler`
+    - alternatively, use something similar to `serratus-api` (serve summary files directly w/ caching)
+        - this will be hard to cross-reference on `sra` though
+- `rsummary`
 - rename `single` to `worker`
-- `psummary` files
 
 ### Sources of inspiration
 
@@ -176,13 +180,11 @@ Name: `Glue`
 - https://medium.com/analytics-vidhya/demystifying-aws-lambda-deal-with-large-files-stored-on-s3-using-python-and-boto3-6078d0e2b9df
 - https://www.reddit.com/r/aws/comments/b73lis/processing_a_large_csv_file_with_a_lambda_line_by/
 - bandwidth: https://www.reddit.com/r/aws/comments/ev9u8f/aws_lambda_maximum_bandwidth_05_gbps/
+- merging multiple parquet files https://stackoverflow.com/questions/55461931/how-to-merge-multiple-parquet-files-in-glue
 
 ### Handy commands
 
 ```sh
-# force reprocessing
-aws s3 rm s3://serratus-athena/run/ --recursive
-
 # sync
 aws s3 sync s3://lovelywater/summary2/ s3://serratus-athena/summary2/ --include "*" --quiet
 aws s3 sync s3://lovelywater/psummary/ s3://serratus-athena/psummary/ --include "*" --quiet
