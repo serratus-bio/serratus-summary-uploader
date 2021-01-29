@@ -133,7 +133,11 @@ Name: `InvokeFunctionInAccount`
 }
 ```
 
-Inline policy for `serratus-summary-uploader-single-role`:
+#### `serratus-summary-uploader-single-role`
+
+- `AmazonDynamoDBFullAccess`
+
+- Inline policy:
 
 Name: `Glue`
 
@@ -159,6 +163,13 @@ Name: `Glue`
         }
     ]
 }
+```
+
+### DynamoDB
+
+```sh
+aws dynamodb create-table \
+    --table-name psra \
 ```
 
 - add `s3:*` for `clear()`
