@@ -1,6 +1,6 @@
 from . import SummaryBatch
 from .summary.nucleotide import NucleotideSummary
-from .table import UploadTable
+from .table.athena import AthenaTable
 
 class NucleotideBatch(SummaryBatch):
 
@@ -9,18 +9,18 @@ class NucleotideBatch(SummaryBatch):
         self.summary_objects = [NucleotideSummary(sra_id) for sra_id in self.sra_ids]
         s3_dir = 'nucleotide'
         self.tables = {
-            'sra': UploadTable(
+            'sra': AthenaTable(
                 name='nsra',
+                cols=['sra', 'readlength', 'genome', 'version', 'date'],
                 s3_name='sra',
                 s3_dir=s3_dir,
-                cols=['sra', 'readlength', 'genome', 'version', 'date'],
                 projection_enabled=False
             ),
-            'fam': UploadTable(
+            'fam': AthenaTable(
                 name='nfamily',
+                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
                 s3_name='family',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -31,11 +31,11 @@ class NucleotideBatch(SummaryBatch):
                     'pctid':'0,100'
                 }
             ),
-            'seq': UploadTable(
+            'seq': AthenaTable(
                 name='nsequence',
+                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
                 s3_name='sequence',
                 s3_dir=s3_dir,
-                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
