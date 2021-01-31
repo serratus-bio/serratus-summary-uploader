@@ -1,3 +1,5 @@
+cd src
+
 pushd lambda_worker
 zip -rq package .
 aws lambda update-function-code \
