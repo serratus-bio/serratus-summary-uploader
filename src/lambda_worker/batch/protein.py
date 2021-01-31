@@ -1,6 +1,6 @@
 from . import SummaryBatch
 from .summary.protein import ProteinSummary
-from .table import UploadTable
+from .table.athena import AthenaTable
 
 class ProteinBatch(SummaryBatch):
 
@@ -9,18 +9,18 @@ class ProteinBatch(SummaryBatch):
         self.summary_objects = [ProteinSummary(sra_id) for sra_id in self.sra_ids]
         s3_dir = 'protein'
         self.tables = {
-            'sra': UploadTable(
+            'sra': AthenaTable(
                 name='psra',
+                cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 s3_name='sra',
                 s3_dir=s3_dir,
-                cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
                 projection_enabled=False
             ),
-            'fam': UploadTable(
+            'fam': AthenaTable(
                 name='pfamily',
+                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 s3_name='family',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -31,11 +31,11 @@ class ProteinBatch(SummaryBatch):
                     'pctid':'0,100'
                 }
             ),
-            'gen': UploadTable(
+            'gen': AthenaTable(
                 name='protein',
+                cols=['sra', 'fam', 'protein', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
                 s3_name='protein',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'protein', 'gencvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
@@ -46,11 +46,11 @@ class ProteinBatch(SummaryBatch):
                     'pctid':'0,100'
                 }
             ),
-            'seq': UploadTable(
+            'seq': AthenaTable(
                 name='psequence',
+                cols=['sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 s3_name='sequence',
                 s3_dir=s3_dir,
-                cols=['sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols'],
                 projection_enabled=True,
                 projection_types={
                     'score': 'integer',
