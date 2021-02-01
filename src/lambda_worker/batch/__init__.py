@@ -1,8 +1,5 @@
 import time
 
-cluster_arn = ''
-secret_arn = ''
-
 class SummaryBatch(object):
 
     def __init__(self, sra_ids, log_id):
