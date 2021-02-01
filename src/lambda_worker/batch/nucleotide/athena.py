@@ -1,6 +1,6 @@
-from . import SummaryBatch
-from .summary.nucleotide import NucleotideSummary
-from .table.athena import AthenaTable
+from .. import SummaryBatch
+from ..summary.nucleotide import NucleotideSummary
+from ..table.athena import AthenaTable
 
 class NucleotideBatch(SummaryBatch):
 

@@ -1,6 +1,6 @@
-from . import SummaryBatch
-from .summary.protein import ProteinSummary
-from .table.athena import AthenaTable
+from .. import SummaryBatch
+from ..summary.protein import ProteinSummary
+from ..table.athena import AthenaTable
 
 class ProteinBatch(SummaryBatch):
 
