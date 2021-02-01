@@ -10,18 +10,18 @@ class ProteinBatch(SummaryBatch):
         self.tables = {
             'sra': AuroraTable(
                 name='psra',
-                cols=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date']
+                cols=['sra_id', 'read_length', 'genome', 'aligned_reads', 'date']
             ),
             'fam': AuroraTable(
                 name='pfamily',
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'alns', 'avgcols']
+                cols=['sra_id', 'family_name', 'coverage_bins', 'score', 'percent_identity', 'n_reads', 'aligned_length']
             ),
             'gen': AuroraTable(
                 name='protein',
-                cols=['sra', 'fam', 'protein', 'gencvg', 'score', 'pctid', 'alns', 'avgcols']
+                cols=['sra_id', 'family_name', 'protein_name', 'coverage_bins', 'score', 'percent_identity', 'n_reads', 'aligned_length']
             ),
             'seq': AuroraTable(
                 name='psequence',
-                cols=['sra', 'fam', 'protein', 'seq', 'seqcvg', 'score', 'pctid', 'alns', 'avgcols']
+                cols=['sra_id', 'family_name', 'protein_name', 'genbank_id', 'coverage_bins', 'score', 'percent_identity', 'n_reads', 'aligned_length']
             )
         }

@@ -1,7 +1,7 @@
 import os
 from batch.download import SummaryIndex
-from batch.nucleotide.athena import NucleotideBatch
-from batch.protein.athena import ProteinBatch
+from batch.nucleotide.aurora import NucleotideBatch
+from batch.protein.aurora import ProteinBatch
 
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
 NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
