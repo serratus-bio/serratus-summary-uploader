@@ -17,9 +17,6 @@ class Summary(object):
             self.parsed = True
         except Exception as e:
             raise ValueError(f'Failed to parse {self.sra_id}: {e!r}') from e
-        for section in self.sections.values():
-            if hasattr(section, 'expand_entries'):
-                section.expand_entries()
 
     def __repr__(self):
         if self.parsed:

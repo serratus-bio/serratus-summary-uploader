@@ -1,7 +1,7 @@
 import os
 from batch.download import SummaryIndex
-from batch.nucleotide import NucleotideBatch
-from batch.protein import ProteinBatch
+from batch.nucleotide.aurora import NucleotideBatch
+from batch.protein.aurora import ProteinBatch
 
 INDEX_BUCKET = os.environ['INDEX_BUCKET']
 NUCLEOTIDE_INDEX = os.environ['NUCLEOTIDE_INDEX']
@@ -21,7 +21,7 @@ def handler_nucleotide(event, context):
     if (event.get('clear', False)):
         print('resetting tables and data')
         for table in NucleotideBatch([], 0).tables.values():
-            table.delete_existing()
+            table.upload_teardown()
         return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
@@ -34,7 +34,7 @@ def handler_protein(event, context):
     if (event.get('clear', False)):
         print('resetting tables and data')
         for table in ProteinBatch([], 0).tables.values():
-            table.delete_existing()
+            table.upload_teardown()
         return
     start_byte = event['start_byte']
     end_byte = event['end_byte']

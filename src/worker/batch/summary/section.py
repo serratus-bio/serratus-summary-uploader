@@ -6,8 +6,9 @@ from .parse import (
 
 class SummarySection(object):
     
-    def __init__(self, parse_keys, is_comment=False, last_item_any_char=False):
+    def __init__(self, parse_keys, name_map={}, is_comment=False, last_item_any_char=False):
         self.parse_keys = parse_keys
+        self.name_map = name_map
         self.is_comment = is_comment
         self.last_item_any_char = last_item_any_char
         self.entries = []
@@ -25,6 +26,10 @@ class SummarySection(object):
 
     def add(self, line, extra_entries=None):
         d = self.parse(line)
+        if self.name_map:
+            d = {new: d[old] for old, new in self.name_map.items() if new}
         if extra_entries:
             d.update(extra_entries)
+        if hasattr(self, 'expand_entry'):
+            d = self.expand_entry(d)
         self.entries.append(d)

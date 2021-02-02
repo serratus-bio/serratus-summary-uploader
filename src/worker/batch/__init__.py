@@ -12,7 +12,8 @@ class SummaryBatch(object):
     def process(self):
         self.download()
         self.parse()
-        self.create_dataframe()
+        self.create_dataframes()
+        # self.upload_init()
         self.upload()
         self.processed = True
         self.log(f'Finished {self}')
@@ -25,20 +26,18 @@ class SummaryBatch(object):
         self.log(f'Download took {time.time() - start_time:.1f}s')
 
     def parse(self):
-        start_time = time.time()
-        self.log('Parsing started')
         for summary in self.summary_objects:
             summary.parse()
             for key, table in self.tables.items():
                 table.entries += summary.sections[key].entries
-        self.log(f'Parsing took {time.time() - start_time:.1f}s')
 
-    def create_dataframe(self):
-        start_time = time.time()
-        self.log(f'Dataframe creation started')
+    def create_dataframes(self):
         for table in self.tables.values():
             table.create_dataframe()
-        self.log(f'Dataframe creation took {time.time() - start_time:.1f}s')
+
+    def upload_init(self):
+        for table in self.tables.values():
+            table.upload_init()
 
     def upload(self):
         for table in self.tables.values():

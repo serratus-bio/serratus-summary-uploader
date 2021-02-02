@@ -1,2 +1,4 @@
 boto3
+pandas
 awswrangler
+sqlalchemy-aurora-data-api

@@ -1,55 +1,115 @@
 # serratus-summary-uploader
 
-Uploads files to `s3://serratus-athena` to be queried via [serratus-summary-api](https://github.com/serratus-bio/serratus-summary-api).
+Uploads files to Aurora Serverless.
+
+For previous iteration using Athena, see [athena.md](doc/athena.md).
 
 ## Overview
 
 For each SRA run processed by Serratus:
 
-1. Download summary file from `s3://lovelywater/summary2/`
-2. Parse file into JSON format
-3. Upload files:
-    - `s3://serratus-athena/run/<RUN>.json`
-    - `s3://serratus-athena/family/<RUN>_<FAMILY>.json`
-    - `s3://serratus-athena/sequence/<RUN>_<SEQUENCE>.json`
+1. Download summary files from `s3://lovelywater/summary2/`
+2. Parse and upload files into 1 table per summary section.
+
+## Lambda events
+
+### Manager
+
+Seed event:
+
+```json
+{
+  "type": "protein"
+}
+```
+
+### Worker
+
+Process 5 SRA runs:
+
+```json
+{
+  "type": "protein",
+  "start_byte": 0,
+  "end_byte": 49
+}
+```
+
+Clear tables:
+
+```json
+{
+  "type": "protein",
+  "clear": true
+}
+```
 
 ## AWS Setup
+
+### Aurora Serverless
+
+- standard create
+- engine type
+    - engine type: aurora
+    - edition: postgresql compatibility
+    - capacity type: serverless
+    - version: aurora postgresql (comatible w/ postgresql 10.12)
+- settings
+    - db cluster id: serratus-aurora
+    - master username: serratus
+    - pw: auto-gen
+- capacity settings
+    - default min/max
+    - pause after 5m
+- connectivity
+    - vpc: serratus-aurora-vpc
+    - create new db subnet group
+    - vpc sg: serratus-aurora-sg
+    - web service data api: enable
+- additional
+    - initial db: `summary`
+    - backup retention: 1d
+    - disable copy tags
+    - enable deletion protection
 
 ### Lambda
 
 2 Lambda functions:
 
-- `serratus-summary-uploader-batch`
-- `serratus-summary-uploader-single`
+- `serratus-summary-uploader-manager`
+- `serratus-summary-uploader-worker`
 
-`batch` iterates over `s3://serratus-athena/index.txt` and calls `single` per line (`run_id`).
+`manager` iterates over `s3://serratus-athena/index.txt` and calls `worker` per batch of lines.
 
-#### Batch lambda
+#### Manager lambda
 
-- Role: `serratus-summary-uploader-batch-role`
+- Role: `serratus-summary-uploader-manager-role`
 - Environment variables
     ```json
     {
-        "WORKER_LAMBDA": "serratus-summary-uploader-single",
+        "WORKER_LAMBDA": "serratus-summary-uploader-worker",
+        "INDEX_BUCKET": "serratus-summary-uploader",
         "NUCLEOTIDE_INDEX": "nindex.txt",
         "PROTEIN_INDEX": "pindex.txt"
     }
     ```
-- Timeout: 15m
-- Concurrency: unreserved
+- Handler: `main.handler`
+- Timeout: 1m
+- Concurrency: 10
 - Retry attempts: 0
 
 #### Worker lambda
 
-- Role: `serratus-summary-uploader-single-role`
+- Role: `serratus-summary-uploader-worker-role`
 - Environment variables
     ```json
     {
-        "INDEX_BUCKET": "serratus-athena",
+        "INDEX_BUCKET": "serratus-summary-uploader",
         "NUCLEOTIDE_INDEX": "nindex.txt",
         "PROTEIN_INDEX": "pindex.txt"
     }
     ```
+- Handler: `main.handler`
 - Timeout: 15m
 - Memory: 10240MB (max)
 - Concurrency: unreserved
@@ -58,64 +118,41 @@ For each SRA run processed by Serratus:
 
 ### S3
 
-#### Download bucket policy
+- bucket name: `serratus-summary-uploader`
+- policy
 
-```json
-{
-    "Sid": "serratus-summary-uploader-single",
-    "Effect": "Allow",
-    "Principal": {
-        "AWS": "arn:aws:iam::797308887321:role/service-role/serratus-summary-uploader-single-role"
+    ```json
+    {
+        "Sid": "serratus-summary-uploader-manager",
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": "arn:aws:iam::797308887321:role/service-role/serratus-summary-uploader-manager-role"
+        },
+        "Action": [
+            "s3:GetObject"
+        ],
+        "Resource": [
+            "arn:aws:s3:::serratus-summary-uploader/*"
+        ]
     },
-    "Action": [
-        "s3:ListBucket",
-        "s3:GetObject"
-    ],
-    "Resource": [
-        "arn:aws:s3:::lovelywater",
-        "arn:aws:s3:::lovelywater/*"
-    ]
-}
-```
-
-#### Upload bucket policy
-
-```json
-{
-    "Sid": "serratus-summary-uploader-single",
-    "Effect": "Allow",
-    "Principal": {
-        "AWS": "arn:aws:iam::797308887321:role/service-role/serratus-summary-uploader-single-role"
-    },
-    "Action": [
-        "s3:ListBucket",
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:PutObjectAcl"
-    ],
-    "Resource": [
-        "arn:aws:s3:::serratus-athena",
-        "arn:aws:s3:::serratus-athena/*"
-    ]
-},
-{
-    "Sid": "serratus-summary-uploader-batch",
-    "Effect": "Allow",
-    "Principal": {
-        "AWS": "arn:aws:iam::797308887321:role/service-role/serratus-summary-uploader-batch-role"
-    },
-    "Action": [
-        "s3:GetObject"
-    ],
-    "Resource": [
-        "arn:aws:s3:::serratus-athena/*"
-    ]
-}
-```
+    {
+        "Sid": "serratus-summary-uploader-worker",
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": "arn:aws:iam::797308887321:role/service-role/serratus-summary-uploader-worker-role"
+        },
+        "Action": [
+            "s3:GetObject"
+        ],
+        "Resource": [
+            "arn:aws:s3:::serratus-summary-uploader/*"
+        ]
+    }
+    ```
 
 ### IAM
 
-Inline policy for `serratus-summary-uploader-batch-role`:
+Inline policy for `serratus-summary-uploader-manager-role`:
 
 Name: `InvokeFunctionInAccount`
 
@@ -127,35 +164,37 @@ Name: `InvokeFunctionInAccount`
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": "lambda:InvokeFunction",
-            "Resource": "arn:aws:lambda:*:797308887321:function:*"
+            "Resource": "*"
         }
     ]
 }
 ```
 
-Inline policy for `serratus-summary-uploader-single-role`:
+Inline policy for `serratus-summary-uploader-worker-role`:
 
-Name: `Glue`
+Name: `RDSDataApi`
 
 ```json
 {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "glue:BatchCreatePartition",
-                "glue:GetDatabase",
-                "glue:GetPartition",
-                "glue:CreateTable",
-                "glue:CreateSchema",
-                "glue:DeleteTable",
-                "glue:CreatePartition",
-                "glue:GetSchema",
-                "glue:GetTable"
+                "rds-data:*"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
 }
@@ -167,33 +206,13 @@ Name: `Glue`
 
 ### TODO
 
-- bucketing for fast filtering by `sra`
-    - can't easily bucket w/ `awswrangler`
-    - alternatively, use something similar to `serratus-api` (serve summary files directly w/ caching)
-        - this will be hard to cross-reference on `sra` though
 - `rsummary`
-- rename `single` to `worker`
-
-### Sources of inspiration
-
-- https://medium.com/swlh/processing-large-s3-files-with-aws-lambda-2c5840ae5c91
-- https://medium.com/analytics-vidhya/demystifying-aws-lambda-deal-with-large-files-stored-on-s3-using-python-and-boto3-6078d0e2b9df
-- https://www.reddit.com/r/aws/comments/b73lis/processing_a_large_csv_file_with_a_lambda_line_by/
-- bandwidth: https://www.reddit.com/r/aws/comments/ev9u8f/aws_lambda_maximum_bandwidth_05_gbps/
-- merging multiple parquet files https://stackoverflow.com/questions/55461931/how-to-merge-multiple-parquet-files-in-glue
 
 ### Handy commands
 
 ```sh
-# sync
-aws s3 sync s3://lovelywater/summary2/ s3://serratus-athena/summary2/ --include "*" --quiet
-aws s3 sync s3://lovelywater/psummary/ s3://serratus-athena/psummary/ --include "*" --quiet
-
-# generate list
+# generate index
 sed 's/...............................//g' pindex.tsv | sed 's/.psummary//g' > pindex.txt
-
-# clean __pycache__
-find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 ```
 
 ### Lambda Throttling
