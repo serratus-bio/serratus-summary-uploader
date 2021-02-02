@@ -26,6 +26,6 @@ class ProteinBatch(SummaryBatch):
             'seq': AuroraTable(
                 name='psequence',
                 cols=['sra_id', 'family_name', 'protein_name', 'genbank_id', 'coverage_bins', 'score', 'percent_identity', 'n_reads', 'aligned_length'],
-                keys=['sra_id', 'genbank_id']
+                keys=['sra_id', 'family_name', 'protein_name', 'genbank_id']
             )
         }
