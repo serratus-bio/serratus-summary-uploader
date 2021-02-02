@@ -10,17 +10,17 @@ class NucleotideBatch(SummaryBatch):
         self.tables = {
             'sra': AuroraTable(
                 name='nsra',
-                cols=['sra', 'readlength', 'genome', 'version', 'date'],
-                keys=['sra']
+                cols=['sra_id', 'read_length', 'genome', 'version', 'date'],
+                keys=['sra_id']
             ),
             'fam': AuroraTable(
                 name='nfamily',
-                cols=['sra', 'fam', 'famcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'top', 'topscore', 'toplen', 'topname'],
-                keys=['sra', 'fam']
+                cols=['sra_id', 'family_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'n_global_reads', 'length', 'top_genbank_id', 'top_score', 'top_length', 'top_name'],
+                keys=['sra_id', 'family_name']
             ),
             'seq': AuroraTable(
                 name='nsequence',
-                cols=['sra', 'seq', 'seqcvg', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
-                keys=['sra', 'seq']
+                cols=['sra_id', 'family_name', 'genbank_id', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'n_global_reads', 'length', 'genbank_name'],
+                keys=['sra_id', 'genbank_id']
             )
         }
