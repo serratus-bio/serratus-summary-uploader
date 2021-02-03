@@ -10,13 +10,14 @@ PROTEIN_INDEX = os.environ['PROTEIN_INDEX']
 
 WORKER_LAMBDA = os.environ['WORKER_LAMBDA']
 MAX_LINES_PER_WORKER = 1000
-nucleotide_index = s3.Object(bucket_name=INDEX_BUCKET, key=NUCLEOTIDE_INDEX)
-protein_index = s3.Object(bucket_name=INDEX_BUCKET, key=PROTEIN_INDEX)
+MINIMUN_REMAINING_TIME_MS = 10000
 
 def handler(event, context):
     if (event['type'] == 'nucleotide'):
+        nucleotide_index = s3.Object(bucket_name=INDEX_BUCKET, key=NUCLEOTIDE_INDEX)
         return batch_handler(event, context, nucleotide_index)
     if (event['type'] == 'protein'):
+        protein_index = s3.Object(bucket_name=INDEX_BUCKET, key=PROTEIN_INDEX)
         return batch_handler(event, context, protein_index)
     raise ValueError('Invalid type key')
 
@@ -29,16 +30,18 @@ def batch_handler(event, context, index_object):
         n_lines += 1
         next_start_byte += len(line) + 1  # \n
         if n_lines >= MAX_LINES_PER_WORKER:
+            # invoke worker
+            worker_event = {
+                'type': event['type'],
+                'start_byte': start_byte,
+                'end_byte': next_start_byte - 1
+            }
+            invoke_lambda(WORKER_LAMBDA, worker_event)
+            n_lines = 0
+            start_byte = next_start_byte
+        if context.get_remaining_time_in_millis() < MINIMUN_REMAINING_TIME_MS:
             break
 
-    # invoke worker
-    worker_event = {
-        'type': event['type'],
-        'start_byte': start_byte,
-        'end_byte': next_start_byte - 1
-    }
-    invoke_lambda(WORKER_LAMBDA, worker_event)
-    
     # invoke next batch
     if next_start_byte < index_object.content_length:
         next_event = {
