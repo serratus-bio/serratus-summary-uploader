@@ -33,7 +33,7 @@ class RdrpSummarySraSection(SummarySection):
                 'readlength': 'read_length',
                 'genome': 'genome',
                 'totalalns': 'aligned_reads',
-                'truncated': None,
+                'truncated': 'truncated',
                 'date': 'date'
             },
             is_comment=True

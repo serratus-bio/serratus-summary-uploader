@@ -10,7 +10,7 @@ class ProteinBatch(SummaryBatch):
         self.tables = {
             'sra': AuroraTable(
                 name='psra',
-                cols=['sra_id', 'read_length', 'genome', 'aligned_reads', 'date'],
+                cols=['sra_id', 'read_length', 'genome', 'aligned_reads', 'date', 'truncated'],
                 keys=['sra_id']
             ),
             'fam': AuroraTable(
