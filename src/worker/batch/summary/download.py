@@ -26,7 +26,7 @@ def get_file_contents(bucket, file_key):
     while retry_count < 5:
         try:
             return get_url_contents(url)
-        except (ConnectionResetError, urllib.error.HTTPError):
+        except (ConnectionResetError, urllib.error.URLError):
             retry_count += 1
             time.sleep(2 ** retry_count)
     return get_url_contents(url)
