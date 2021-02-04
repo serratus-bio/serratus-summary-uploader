@@ -1,13 +1,14 @@
 import os
 
-os.environ['INDEX_BUCKET'] = 'serratus-athena'
+os.environ['INDEX_BUCKET'] = 'serratus-summary-uploader'
 os.environ['NUCLEOTIDE_INDEX'] = 'nindex.txt'
 os.environ['PROTEIN_INDEX'] = 'pindex.txt'
+os.environ['RDRP_INDEX'] = 'rindex.txt'
 
 from main import handler
 
 handler({
-    'type': 'protein',
+    'type': 'rdrp',
     'start_byte': 0,
     'end_byte': 49
 },

@@ -90,7 +90,8 @@ Clear tables:
         "WORKER_LAMBDA": "serratus-summary-uploader-worker",
         "INDEX_BUCKET": "serratus-summary-uploader",
         "NUCLEOTIDE_INDEX": "nindex.txt",
-        "PROTEIN_INDEX": "pindex.txt"
+        "PROTEIN_INDEX": "pindex.txt",
+        "RDRP_INDEX": "rindex.txt"
     }
     ```
 - Handler: `main.handler`
@@ -106,7 +107,8 @@ Clear tables:
     {
         "INDEX_BUCKET": "serratus-summary-uploader",
         "NUCLEOTIDE_INDEX": "nindex.txt",
-        "PROTEIN_INDEX": "pindex.txt"
+        "PROTEIN_INDEX": "pindex.txt",
+        "RDRP_INDEX": "rindex.txt"
     }
     ```
 - Handler: `main.handler`
@@ -206,7 +208,7 @@ Name: `RDSDataApi`
 
 ### TODO
 
-- `rsummary`
+- separate events for `upload_init` vs. `upload`
 
 ### Handy commands
 
