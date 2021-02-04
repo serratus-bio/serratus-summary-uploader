@@ -49,7 +49,7 @@ class RdrpSummaryPhySection(SummarySection):
             name_map = {
                 'phycvg': 'coverage_bins',
                 'phy': 'phylum_name',
-                'cat': 'cat',
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
@@ -68,7 +68,7 @@ class RdrpSummaryFamSection(SummarySection):
             name_map = {
                 'famcvg': 'coverage_bins',
                 'fam': 'fam',  # expand
-                'cat': 'cat',
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
@@ -94,7 +94,7 @@ class RdrpSummaryVirSection(SummarySection):
             name_map = {
                 'vircvg': 'coverage_bins',
                 'vir': 'vir',  # expand
-                'cat': 'cat',
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
