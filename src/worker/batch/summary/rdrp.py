@@ -44,10 +44,12 @@ class RdrpSummaryPhySection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['phycvg', 'phy', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            parse_keys=['phycvg', 'phy', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
                 'phycvg': 'coverage_bins',
                 'phy': 'phylum_name',
+                'cat': 'cat',
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
@@ -61,10 +63,12 @@ class RdrpSummaryFamSection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['famcvg', 'fam', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            parse_keys=['famcvg', 'fam', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
                 'famcvg': 'coverage_bins',
                 'fam': 'fam',  # expand
+                'cat': 'cat',
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
@@ -85,10 +89,12 @@ class RdrpSummaryVirSection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['vircvg', 'vir', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            parse_keys=['vircvg', 'vir', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
                 'vircvg': 'coverage_bins',
                 'vir': 'vir',  # expand
+                'cat': 'cat',
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',

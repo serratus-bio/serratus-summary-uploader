@@ -15,17 +15,17 @@ class RdrpBatch(SummaryBatch):
             ),
             'phy': AuroraTable(
                 name='rphylum',
-                cols=['sra_id', 'phylum_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
+                cols=['sra_id', 'phylum_name', 'cat', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
                 keys=['sra_id', 'phylum_name']
             ),
             'fam': AuroraTable(
                 name='rfamily',
-                cols=['sra_id', 'phylum_name', 'family_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
+                cols=['sra_id', 'phylum_name', 'family_name', 'cat', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
                 keys=['sra_id', 'phylum_name', 'family_name']
             ),
             'vir': AuroraTable(
                 name='rdrp',
-                cols=['sra_id', 'phylum_name', 'family_name', 'virus_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
+                cols=['sra_id', 'phylum_name', 'family_name', 'virus_name', 'cat', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
                 keys=['sra_id', 'phylum_name', 'family_name', 'virus_name']
             )
         }
