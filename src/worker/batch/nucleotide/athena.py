@@ -6,7 +6,7 @@ class NucleotideBatch(SummaryBatch):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.summary_objects = [NucleotideSummary(sra_id) for sra_id in self.sra_ids]
+        self.summary_objects = [NucleotideSummary(run_id) for run_id in self.run_ids]
         s3_dir = 'nucleotide'
         self.tables = {
             'sra': AthenaTable(

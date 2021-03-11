@@ -14,12 +14,12 @@ def parse_summary(summary):
                 # comment is first section, single line
                 if section.is_comment:
                     section.add(line)
-                    summary.sra_id = section.entries[0]['sra_id']
+                    summary.run_id = section.entries[0]['run_id']
                     line = get_next_line(fs, prefix)
                     continue
                 while line.startswith(section.parse_keys[0]):
                     extra_entries = {
-                        'sra_id': summary.sra_id
+                        'run_id': summary.run_id
                     }
                     section.add(line, extra_entries)
                     line = get_next_line(fs, prefix)

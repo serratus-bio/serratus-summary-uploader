@@ -30,8 +30,8 @@ def handler_nucleotide(event, context):
         return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
-    sra_ids = list(nucleotide_index.get_sra_ids(start_byte, end_byte))
-    nucleotide_batch = NucleotideBatch(sra_ids, start_byte)
+    run_ids = list(nucleotide_index.get_run_ids(start_byte, end_byte))
+    nucleotide_batch = NucleotideBatch(run_ids, start_byte)
     nucleotide_batch.process()
     return
 
@@ -43,8 +43,8 @@ def handler_protein(event, context):
         return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
-    sra_ids = list(protein_index.get_sra_ids(start_byte, end_byte))
-    protein_batch = ProteinBatch(sra_ids, start_byte)
+    run_ids = list(protein_index.get_run_ids(start_byte, end_byte))
+    protein_batch = ProteinBatch(run_ids, start_byte)
     protein_batch.process()
     return
 
@@ -56,7 +56,7 @@ def handler_rdrp(event, context):
         return
     start_byte = event['start_byte']
     end_byte = event['end_byte']
-    sra_ids = list(rdrp_index.get_sra_ids(start_byte, end_byte))
-    rdrp_batch = RdrpBatch(sra_ids, start_byte)
+    run_ids = list(rdrp_index.get_run_ids(start_byte, end_byte))
+    rdrp_batch = RdrpBatch(run_ids, start_byte)
     rdrp_batch.process()
     return

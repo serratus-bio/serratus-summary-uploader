@@ -5,9 +5,9 @@ from botocore.exceptions import ClientError
 
 class ProteinSummary(Summary):
 
-    def __init__(self, sra_id):
-        super().__init__(sra_id)
-        self.line_prefix_ignore = f'sra={sra_id};'
+    def __init__(self, run_id):
+        super().__init__(run_id)
+        self.line_prefix_ignore = f'sra={run_id};'
         self.sections = {
             'sra': ProteinSraSection(),
             'fam': ProteinFamSection(),
@@ -17,9 +17,9 @@ class ProteinSummary(Summary):
 
     def download(self):
         try:
-            self.text = get_protein(self.sra_id)
+            self.text = get_protein(self.run_id)
         except ClientError as e:
-            raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
+            raise RuntimeError(f'[sra={self.run_id}] {e!r}') from e
 
 
 class ProteinSraSection(SummarySection):
@@ -28,7 +28,7 @@ class ProteinSraSection(SummarySection):
         super().__init__(
             parse_keys=['sra', 'type', 'readlength', 'genome', 'totalalns', 'truncated', 'date'],
             name_map = {
-                'sra': 'sra_id',
+                'sra': 'run_id',
                 'type': None,
                 'readlength': 'read_length',
                 'genome': 'genome',
