@@ -1,29 +1,32 @@
 import time
 import urllib
 
-bucket = 'lovelywater'
-
 nucleotide_dir = 'summary2'
 nucleotide_suffix = '.summary'
 protein_dir = 'psummary'
 protein_suffix = '.psummary'
-
+rdrp_dir = 'rsummary'
+rdrp_suffix = '.psummary'
 
 def get_nucleotide(sra_id):
     file_key = f'{nucleotide_dir}/{sra_id}{nucleotide_suffix}'
-    return get_file_contents(file_key)
+    return get_file_contents('lovelywater', file_key)
 
 def get_protein(sra_id):
     file_key = f'{protein_dir}/{sra_id}{protein_suffix}'
-    return get_file_contents(file_key)
+    return get_file_contents('lovelywater', file_key)
 
-def get_file_contents(file_key):
+def get_rdrp(sra_id):
+    file_key = f'{rdrp_dir}/{sra_id}{rdrp_suffix}'
+    return get_file_contents('serratus-bio', file_key)
+
+def get_file_contents(bucket, file_key):
     url = f'https://s3.amazonaws.com/{bucket}/{file_key}'
     retry_count = 0
     while retry_count < 5:
         try:
             return get_url_contents(url)
-        except (ConnectionResetError, urllib.error.HTTPError):
+        except (ConnectionResetError, urllib.error.URLError):
             retry_count += 1
             time.sleep(2 ** retry_count)
     return get_url_contents(url)

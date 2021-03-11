@@ -1,28 +1,28 @@
 from . import Summary
 from .section import SummarySection
-from .download import get_protein
+from .download import get_rdrp
 from botocore.exceptions import ClientError
 
-class ProteinSummary(Summary):
+class RdrpSummary(Summary):
 
     def __init__(self, sra_id):
         super().__init__(sra_id)
         self.line_prefix_ignore = f'sra={sra_id};'
         self.sections = {
-            'sra': ProteinSraSection(),
-            'fam': ProteinFamSection(),
-            'gen': ProteinGenSection(),
-            'seq': ProteinSeqSection()
+            'sra': RdrpSummarySraSection(),
+            'phy': RdrpSummaryPhySection(),
+            'fam': RdrpSummaryFamSection(),
+            'vir': RdrpSummaryVirSection()
         }
 
     def download(self):
         try:
-            self.text = get_protein(self.sra_id)
+            self.text = get_rdrp(self.sra_id)
         except ClientError as e:
             raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
 
 
-class ProteinSraSection(SummarySection):
+class RdrpSummarySraSection(SummarySection):
 
     def __init__(self):
         super().__init__(
@@ -40,64 +40,73 @@ class ProteinSraSection(SummarySection):
         )
 
 
-class ProteinFamSection(SummarySection):
+class RdrpSummaryPhySection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['famcvg', 'fam', 'score', 'pctid', 'alns', 'avgcols'],
+            parse_keys=['phycvg', 'phy', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
-                'famcvg': 'coverage_bins',
-                'fam': 'family_name',
+                'phycvg': 'coverage_bins',
+                'phy': 'phylum_name',
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
+                'depth': 'depth',
                 'alns': 'n_reads',
                 'avgcols': 'aligned_length'
             }
         )
 
 
-class ProteinGenSection(SummarySection):
+class RdrpSummaryFamSection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['gencvg', 'gen', 'score', 'pctid', 'alns', 'avgcols'],
+            parse_keys=['famcvg', 'fam', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
-                'gencvg': 'coverage_bins',
-                'gen': 'gen',  # expand
+                'famcvg': 'coverage_bins',
+                'fam': 'fam',  # expand
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
+                'depth': 'depth',
                 'alns': 'n_reads',
                 'avgcols': 'aligned_length'
             }
         )
 
     def expand_entry(self, entry):
-        # gen=Hugephage.terminase ->
-        #   fam=Hugephage
-        #   protein=terminase
-        entry['family_name'], entry['protein_name'] = entry['gen'].split('.')
+        # fam=levi.Botourmiaviridae-11 ->
+        #   phylum_name=levi
+        #   family_name=Botourmiaviridae-11
+        entry['phylum_name'], entry['family_name'] = entry['fam'].split('.')
         return entry
 
 
-class ProteinSeqSection(SummarySection):
+class RdrpSummaryVirSection(SummarySection):
 
     def __init__(self):
         super().__init__(
-            parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols'],
+            parse_keys=['vircvg', 'vir', 'cat', 'score', 'pctid', 'depth', 'alns', 'avgcols'],
+            optional_keys=['cat'],
             name_map = {
-                'seqcvg': 'coverage_bins',
-                'seq': 'seq',  # expand
+                'vircvg': 'coverage_bins',
+                'vir': 'vir',  # expand
+                'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
+                'depth': 'depth',
                 'alns': 'n_reads',
                 'avgcols': 'aligned_length'
             }
         )
 
     def expand_entry(self, entry):
-        # seq=Hugephage.capsid.187.2 ->
-        #   fam=Hugephage
-        #   protein=capsid
-        #   seq=187.2
-        entry['family_name'], entry['protein_name'], entry['genbank_id'] = entry['seq'].split('.', maxsplit=2)
+        # vir=dupl.Totiviridae-10.phakopsora_totivirus_d:QED42984 ->
+        #   phylum_name=dupl
+        #   family_name=Totiviridae-10
+        #   virus_name=phakopsora_totivirus_d:QED42984
+        entry['phylum_name'], entry['family_name'], entry['virus_name'] = entry['vir'].split('.', maxsplit=2)
         return entry

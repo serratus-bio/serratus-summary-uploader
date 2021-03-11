@@ -31,31 +31,25 @@ def parse_summary(summary):
     except StopIteration:
         return
 
-def parse_comment_line(line, expected_keys):
+def parse_comment_line(line):
     d = dict([pair.split('=') for pair in
         line.replace('SUMZER_COMMENT=', '')
         .rstrip(';\n')
         .replace(';', ',')
         .split(',')])
-    if (set(d) != expected_keys):
-        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
     cast_types(d)
     return d
 
-def parse_section_line(line, last_key, expected_keys):
-    # there can be ';' and '=' in the last entry
+def parse_section_line(line, last_key):
+    # there can be ';' and '=' in the last entry, type string
     last_key_index = line.index(last_key)
     d1 = parse_generic_line(line[:last_key_index], expected_keys - {last_key})
     d2 = dict([line[last_key_index:].strip(';\n').split('=', maxsplit=1)])
     d1.update(d2)
-    if (set(d1) != expected_keys):
-        raise ValueError(f'Expected {expected_keys}, got {set(d1)}')
     return d1
 
-def parse_generic_line(line, expected_keys):
+def parse_generic_line(line):
     d = dict([pair.split('=') for pair in line.rstrip(';\n').split(';')])
-    if (set(d) != expected_keys):
-        raise ValueError(f'Expected {expected_keys}, got {set(d)}')
     cast_types(d)
     return d
 
