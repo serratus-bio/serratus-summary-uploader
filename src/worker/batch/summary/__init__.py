@@ -21,5 +21,5 @@ class Summary(object):
     def __repr__(self):
         if self.parsed:
             section_info = ''.join(self.sections)
-            return f'Summary(sra={self.run_id}, sections={"todo"})'
-        return f'Summary(sra={self.run_id})'
+            return f'Summary(run_id={self.run_id}, sections={"todo"})'
+        return f'Summary(run_id={self.run_id})'

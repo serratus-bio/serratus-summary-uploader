@@ -18,7 +18,7 @@ class NucleotideSummary(Summary):
         try:
             self.text = get_nucleotide(self.run_id)
         except ClientError as e:
-            raise RuntimeError(f'[sra={self.run_id}] {e!r}') from e
+            raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
 
 class NucleotideSraSection(SummarySection):
