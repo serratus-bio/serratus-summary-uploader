@@ -67,7 +67,7 @@ class RdrpSummaryFamSection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'famcvg': 'coverage_bins',
-                'fam': 'fam',  # expand
+                'fam': 'fam',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -77,7 +77,7 @@ class RdrpSummaryFamSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # fam=levi.Botourmiaviridae-11 ->
         #   phylum_name=levi
         #   family_name=Botourmiaviridae-11
@@ -93,7 +93,7 @@ class RdrpSummaryVirSection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'vircvg': 'coverage_bins',
-                'vir': 'vir',  # expand
+                'vir': 'vir',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -103,7 +103,7 @@ class RdrpSummaryVirSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # vir=dupl.Totiviridae-10.phakopsora_totivirus_d:QED42984 ->
         #   phylum_name=dupl
         #   family_name=Totiviridae-10
