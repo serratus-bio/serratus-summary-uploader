@@ -21,9 +21,6 @@ def test_sra():
 
 def test_phy():
     table = rdrp_batch.tables['phy']
-    assert list(table.entries[0].keys()) == ['coverage_bins', 'phy', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length', 'run_id', 'phylum_name']
-    assert list(table.df.columns) == ['run_id', 'phylum_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length']
-
     assert table.entries[0]['coverage_bins'] == '_________________._______'
     assert table.entries[0]['phy'] == 'pisu'
     assert table.entries[0]['score'] == 2
@@ -37,9 +34,6 @@ def test_phy():
 
 def test_fam():
     table = rdrp_batch.tables['fam']
-    assert list(table.entries[0].keys()) == ['coverage_bins', 'fam', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length', 'run_id', 'phylum_name', 'family_name', 'family_group']
-    assert list(table.df.columns) == ['run_id', 'phylum_name', 'family_name', 'family_group', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length']
-
     assert table.entries[0]['coverage_bins'] == '_________________._______'
     assert table.entries[0]['fam'] == 'pisu.Unc159'
     assert table.entries[0]['score'] == 2
@@ -51,7 +45,6 @@ def test_fam():
     assert table.entries[0]['phylum_name'] == 'Pisuviricota'
     assert table.entries[0]['family_name'] == 'Unclassified-159'
     assert table.entries[0]['family_group'] == 'Unc159'
-
     assert table.entries[1]['coverage_bins'] == '__.______________________'
     assert table.entries[1]['fam'] == 'kiti.Tombusviridae-14'
     assert table.entries[1]['score'] == 1
@@ -67,9 +60,6 @@ def test_fam():
 
 def test_vir():
     table = rdrp_batch.tables['vir']
-    assert list(table.entries[0].keys()) == ['coverage_bins', 'vir', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length', 'run_id', 'virus_name', 'phylum_name', 'family_name', 'family_group']
-    assert list(table.df.columns) == ['run_id', 'phylum_name', 'family_name', 'family_group', 'virus_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length']
-
     assert table.entries[0]['coverage_bins'] == '_________________._______'
     assert table.entries[0]['vir'] == 'pisu.Unc159.picalivirus_c:AFR11839'
     assert table.entries[0]['score'] == 2
