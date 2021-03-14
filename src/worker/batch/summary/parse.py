@@ -43,7 +43,7 @@ def parse_comment_line(line):
 def parse_section_line(line, last_key):
     # there can be ';' and '=' in the last entry, type string
     last_key_index = line.index(last_key)
-    d1 = parse_generic_line(line[:last_key_index], expected_keys - {last_key})
+    d1 = parse_generic_line(line[:last_key_index])
     d2 = dict([line[last_key_index:].strip(';\n').split('=', maxsplit=1)])
     d1.update(d2)
     return d1
