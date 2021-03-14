@@ -2,8 +2,8 @@ import time
 
 class SummaryBatch(object):
 
-    def __init__(self, sra_ids, log_id):
-        self.sra_ids = sra_ids
+    def __init__(self, run_ids, log_id):
+        self.run_ids = run_ids
         self.log_id = log_id
         self.processed = False
         self.summary_objects = []
