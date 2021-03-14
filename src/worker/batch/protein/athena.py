@@ -6,7 +6,7 @@ class ProteinBatch(SummaryBatch):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.summary_objects = [ProteinSummary(sra_id) for sra_id in self.sra_ids]
+        self.summary_objects = [ProteinSummary(run_id) for run_id in self.run_ids]
         s3_dir = 'protein'
         self.tables = {
             'sra': AthenaTable(

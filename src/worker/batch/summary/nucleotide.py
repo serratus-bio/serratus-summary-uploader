@@ -16,9 +16,9 @@ class NucleotideSummary(Summary):
 
     def download(self):
         try:
-            self.text = get_nucleotide(self.sra_id)
+            self.text = get_nucleotide(self.run_id)
         except ClientError as e:
-            raise RuntimeError(f'[sra={self.sra_id}] {e!r}') from e
+            raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
 
 class NucleotideSraSection(SummarySection):
@@ -27,7 +27,7 @@ class NucleotideSraSection(SummarySection):
         super().__init__(
             parse_keys=['sra', 'readlength', 'genome', 'version', 'date'],
             name_map = {
-                'sra': 'sra_id',
+                'sra': 'run_id',
                 'readlength': 'read_length',
                 'genome': 'genome',
                 'version': 'version',
