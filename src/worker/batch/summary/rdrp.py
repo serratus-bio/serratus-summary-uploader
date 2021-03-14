@@ -48,7 +48,7 @@ class RdrpSummaryPhySection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'phycvg': 'coverage_bins',
-                'phy': 'phylum_name',
+                'phy': 'phy',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -57,6 +57,11 @@ class RdrpSummaryPhySection(SummarySection):
                 'avgcols': 'aligned_length'
             }
         )
+
+    def extend_entry(self, entry):
+        entry['phylum_name'] = get_phylum_name(entry['phy'])
+        return entry
+
 
 
 class RdrpSummaryFamSection(SummarySection):
@@ -79,9 +84,12 @@ class RdrpSummaryFamSection(SummarySection):
 
     def extend_entry(self, entry):
         # fam=levi.Botourmiaviridae-11 ->
-        #   phylum_name=levi
-        #   family_name=Botourmiaviridae-11
-        entry['phylum_name'], entry['family_name'] = entry['fam'].split('.')
+        #   phylum_name=Lenarviricota
+        #   family_name=Botourmiaviridae
+        #   family_group=Botourmiaviridae-11
+        phy_str, fam_str = entry['fam'].split('.')
+        entry['phylum_name'] = get_phylum_name(phy_str)
+        entry['family_name'], entry['family_group'] = get_family_tuple(fam_str)
         return entry
 
 
@@ -108,5 +116,29 @@ class RdrpSummaryVirSection(SummarySection):
         #   phylum_name=dupl
         #   family_name=Totiviridae-10
         #   virus_name=phakopsora_totivirus_d:QED42984
-        entry['phylum_name'], entry['family_name'], entry['virus_name'] = entry['vir'].split('.', maxsplit=2)
+        phy_str, fam_str, entry['virus_name'] = entry['vir'].split('.', maxsplit=2)
+        entry['phylum_name'] = get_phylum_name(phy_str)
+        entry['family_name'], entry['family_group'] = get_family_tuple(fam_str)
         return entry
+
+
+phylum_name_map = {
+    'dupl': 'Duplornaviricota',
+    'kiti': 'Kitrinoviricota',
+    'levi': 'Lenarviricota',
+    'nega': 'Negarnaviricota',
+    'pisu': 'Pisuviricota',
+    'rdrp': 'Unclassified',
+    'var': 'Deltavirus',
+}
+
+def get_phylum_name(phy_str):
+    '''Return full phylum name'''
+    return phylum_name_map[phy_str]
+
+
+def get_family_tuple(fam_str):
+    '''Return family_name, family_group'''
+    if fam_str.startswith('Unc'):
+        return (fam_str.replace('Unc', 'Unclassified-'), fam_str)
+    return (fam_str[:fam_str.index('-')], fam_str)
