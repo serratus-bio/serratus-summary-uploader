@@ -68,7 +68,8 @@ def test_vir():
     assert table.entries[0]['n_reads'] == 1
     assert table.entries[0]['aligned_length'] == 26
     assert table.entries[0]['run_id'] == 'DRR015317'
-    assert table.entries[0]['virus_name'] == 'picalivirus_c:AFR11839'
+    assert table.entries[0]['virus_name'] == 'picalivirus_c'
+    assert table.entries[0]['sequence_accession'] == 'AFR11839'
     assert table.entries[0]['phylum_name'] == 'Pisuviricota'
     assert table.entries[0]['family_name'] == 'Unclassified-159'
     assert table.entries[0]['family_group'] == 'Unc159'

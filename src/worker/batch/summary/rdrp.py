@@ -114,11 +114,14 @@ class RdrpSummaryVirSection(SummarySection):
     def extend_entry(self, entry):
         # vir=dupl.Totiviridae-10.phakopsora_totivirus_d:QED42984 ->
         #   phylum_name=dupl
-        #   family_name=Totiviridae-10
-        #   virus_name=phakopsora_totivirus_d:QED42984
-        phy_str, fam_str, entry['virus_name'] = entry['vir'].split('.', maxsplit=2)
+        #   family_name=Totiviridae
+        #   family_group=Totiviridae-10
+        #   virus_name=phakopsora_totivirus_d
+        #   sequence_accession=QED42984
+        phy_str, fam_str, vir_str = entry['vir'].split('.', maxsplit=2)
         entry['phylum_name'] = get_phylum_name(phy_str)
         entry['family_name'], entry['family_group'] = get_family_tuple(fam_str)
+        entry['virus_name'], entry['sequence_accession'] = vir_str.split(':', maxsplit=1)
         return entry
 
 

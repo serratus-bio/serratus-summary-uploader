@@ -25,7 +25,7 @@ class RdrpBatch(SummaryBatch):
             ),
             'vir': AuroraTable(
                 name='rdrp',
-                cols=['run_id', 'phylum_name', 'family_name', 'family_group', 'virus_name', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
-                keys=['run_id', 'phylum_name', 'family_group', 'virus_name']
+                cols=['run_id', 'phylum_name', 'family_name', 'family_group', 'virus_name', 'sequence_accession', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'aligned_length'],
+                keys=['run_id', 'phylum_name', 'family_group', 'virus_name', 'sequence_accession']
             )
         }
