@@ -40,6 +40,6 @@ class SummarySection(object):
             d = {new: d[old] for old, new in self.name_map.items() if new}
         if extra_entries:
             d.update(extra_entries)
-        if hasattr(self, 'expand_entry'):
-            d = self.expand_entry(d)
+        if hasattr(self, 'extend_entry'):
+            d = self.extend_entry(d)
         self.entries.append(d)

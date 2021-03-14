@@ -48,7 +48,7 @@ class RdrpSummaryPhySection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'phycvg': 'coverage_bins',
-                'phy': 'phylum_name',
+                'phy': 'phy',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -57,6 +57,11 @@ class RdrpSummaryPhySection(SummarySection):
                 'avgcols': 'aligned_length'
             }
         )
+
+    def extend_entry(self, entry):
+        entry['phylum_name'] = get_phylum_name(entry['phy'])
+        return entry
+
 
 
 class RdrpSummaryFamSection(SummarySection):
@@ -67,7 +72,7 @@ class RdrpSummaryFamSection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'famcvg': 'coverage_bins',
-                'fam': 'fam',  # expand
+                'fam': 'fam',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -77,11 +82,14 @@ class RdrpSummaryFamSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # fam=levi.Botourmiaviridae-11 ->
-        #   phylum_name=levi
-        #   family_name=Botourmiaviridae-11
-        entry['phylum_name'], entry['family_name'] = entry['fam'].split('.')
+        #   phylum_name=Lenarviricota
+        #   family_name=Botourmiaviridae
+        #   family_group=Botourmiaviridae-11
+        phy_str, fam_str = entry['fam'].split('.')
+        entry['phylum_name'] = get_phylum_name(phy_str)
+        entry['family_name'], entry['family_group'] = get_family_tuple(fam_str)
         return entry
 
 
@@ -93,7 +101,7 @@ class RdrpSummaryVirSection(SummarySection):
             optional_keys=['cat'],
             name_map = {
                 'vircvg': 'coverage_bins',
-                'vir': 'vir',  # expand
+                'vir': 'vir',  # extend
                 'cat': None,
                 'score': 'score',
                 'pctid': 'percent_identity',
@@ -103,10 +111,37 @@ class RdrpSummaryVirSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # vir=dupl.Totiviridae-10.phakopsora_totivirus_d:QED42984 ->
         #   phylum_name=dupl
-        #   family_name=Totiviridae-10
-        #   virus_name=phakopsora_totivirus_d:QED42984
-        entry['phylum_name'], entry['family_name'], entry['virus_name'] = entry['vir'].split('.', maxsplit=2)
+        #   family_name=Totiviridae
+        #   family_group=Totiviridae-10
+        #   virus_name=phakopsora_totivirus_d
+        #   sequence_accession=QED42984
+        phy_str, fam_str, vir_str = entry['vir'].split('.', maxsplit=2)
+        entry['phylum_name'] = get_phylum_name(phy_str)
+        entry['family_name'], entry['family_group'] = get_family_tuple(fam_str)
+        entry['virus_name'], entry['sequence_accession'] = vir_str.split(':', maxsplit=1)
         return entry
+
+
+phylum_name_map = {
+    'dupl': 'Duplornaviricota',
+    'kiti': 'Kitrinoviricota',
+    'levi': 'Lenarviricota',
+    'nega': 'Negarnaviricota',
+    'pisu': 'Pisuviricota',
+    'rdrp': 'Unclassified',
+    'var': 'Deltavirus',
+}
+
+def get_phylum_name(phy_str):
+    '''Return full phylum name'''
+    return phylum_name_map[phy_str]
+
+
+def get_family_tuple(fam_str):
+    '''Return family_name, family_group'''
+    if fam_str.startswith('Unc'):
+        return (fam_str.replace('Unc', 'Unclassified-'), fam_str)
+    return (fam_str[:fam_str.index('-')], fam_str)

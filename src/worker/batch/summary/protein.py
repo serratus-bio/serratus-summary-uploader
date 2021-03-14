@@ -63,7 +63,7 @@ class ProteinGenSection(SummarySection):
             parse_keys=['gencvg', 'gen', 'score', 'pctid', 'alns', 'avgcols'],
             name_map = {
                 'gencvg': 'coverage_bins',
-                'gen': 'gen',  # expand
+                'gen': 'gen',  # extend
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'alns': 'n_reads',
@@ -71,7 +71,7 @@ class ProteinGenSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # gen=Hugephage.terminase ->
         #   fam=Hugephage
         #   protein=terminase
@@ -86,7 +86,7 @@ class ProteinSeqSection(SummarySection):
             parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'alns', 'avgcols'],
             name_map = {
                 'seqcvg': 'coverage_bins',
-                'seq': 'seq',  # expand
+                'seq': 'seq',  # extend
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'alns': 'n_reads',
@@ -94,7 +94,7 @@ class ProteinSeqSection(SummarySection):
             }
         )
 
-    def expand_entry(self, entry):
+    def extend_entry(self, entry):
         # seq=Hugephage.capsid.187.2 ->
         #   fam=Hugephage
         #   protein=capsid

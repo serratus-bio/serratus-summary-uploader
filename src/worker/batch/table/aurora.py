@@ -8,7 +8,7 @@ import time
 cluster_arn = 'arn:aws:rds:us-east-1:797308887321:cluster:serratus-aurora'
 secret_arn = 'arn:aws:secretsmanager:us-east-1:797308887321:secret:rds-db-credentials/cluster-KOFPN4Q2TKDBO5FHY6QO5M3S7Q/serratus-agdBn9'
 
-rdsData = boto3.client('rds-data')
+rdsData = boto3.client('rds-data', region_name='us-east-1')
 
 class AuroraTable(UploadTable):
 
