@@ -20,7 +20,7 @@ class NucleotideBatch(SummaryBatch):
             ),
             'seq': AuroraTable(
                 name='nsequence',
-                cols=['run_id', 'family_name', 'genbank_id', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'n_global_reads', 'length', 'genbank_name'],
-                keys=['run_id', 'genbank_id']
+                cols=['run_id', 'family_name', 'sequence_accession', 'coverage_bins', 'score', 'percent_identity', 'depth', 'n_reads', 'n_global_reads', 'length', 'virus_name'],
+                keys=['run_id', 'sequence_accession']
             )
         }
