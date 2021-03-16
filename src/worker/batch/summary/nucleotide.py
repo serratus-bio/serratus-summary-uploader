@@ -67,7 +67,7 @@ class NucleotideSeqSection(SummarySection):
             parse_keys=['seqcvg', 'seq', 'score', 'pctid', 'depth', 'aln', 'glb', 'len', 'family', 'name'],
             name_map = {
                 'seqcvg': 'coverage_bins',
-                'seq': 'genbank_id',
+                'seq': 'sequence_accession',
                 'score': 'score',
                 'pctid': 'percent_identity',
                 'depth': 'depth',
@@ -75,7 +75,7 @@ class NucleotideSeqSection(SummarySection):
                 'glb': 'n_global_reads',
                 'len': 'length',
                 'family': 'family_name',
-                'name': 'genbank_name'
+                'name': 'virus_name'
             },
             last_item_any_char=True
         )
