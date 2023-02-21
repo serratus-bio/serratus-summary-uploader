@@ -1,2 +1,2 @@
-export PYTHONPATH="$PYTHONPATH:./src/worker"
-pytest
+export PYTHONPATH="$PYTHONPATH:."
+pytest tests/

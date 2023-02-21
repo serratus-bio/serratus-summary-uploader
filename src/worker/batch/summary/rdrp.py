@@ -1,9 +1,9 @@
-from . import Summary
-from .section import SummarySection
+from .file import SummaryFile
+from .file_section import SummaryFileSection
 from .download import get_summary_file
 from botocore.exceptions import ClientError
 
-class RdrpSummary(Summary):
+class RdrpSummary(SummaryFile):
 
     def __init__(self, run_id):
         super().__init__(run_id)
@@ -20,12 +20,12 @@ class RdrpSummary(Summary):
         prefix = 'rsummary/'
         suffix = '.psummary'
         try:
-            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
+            self.set_text(bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
 
-class RdrpSummarySraSection(SummarySection):
+class RdrpSummarySraSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -43,7 +43,7 @@ class RdrpSummarySraSection(SummarySection):
         )
 
 
-class RdrpSummaryPhySection(SummarySection):
+class RdrpSummaryPhySection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -67,7 +67,7 @@ class RdrpSummaryPhySection(SummarySection):
 
 
 
-class RdrpSummaryFamSection(SummarySection):
+class RdrpSummaryFamSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -96,7 +96,7 @@ class RdrpSummaryFamSection(SummarySection):
         return entry
 
 
-class RdrpSummaryVirSection(SummarySection):
+class RdrpSummaryVirSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(

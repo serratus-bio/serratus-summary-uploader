@@ -5,9 +5,16 @@ class UploadTable(object):
     def __init__(self, name, cols):
         self.name = name
         self.cols = cols
-        self.entries = []  # populated by SummaryBatch.parse()
+        self.rows = []  # populated by SummaryBatch.parse()
+        self.df = None
 
     def create_dataframe(self):
-        if not self.entries:
+        if not self.rows:
             return
-        self.df = pd.DataFrame(self.entries)[self.cols]
+        self.df = pd.DataFrame(self.rows)[self.cols]
+
+    def upload_init(self):
+        pass
+
+    def upload(self):
+        pass

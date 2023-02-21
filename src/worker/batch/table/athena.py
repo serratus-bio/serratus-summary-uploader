@@ -27,7 +27,7 @@ class AthenaTable(UploadTable):
         pass
 
     def upload(self):
-        if not self.entries:
+        if not self.rows:
             return
         wr.s3.to_parquet(
             df=self.df,

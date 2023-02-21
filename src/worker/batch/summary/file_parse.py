@@ -1,35 +1,9 @@
-import io
+from io import StringIO
 
 INT_KEYS = {'score', 'pctid', 'aln', 'glb', 'len', 'topscore', 'toplen'}
 INT_KEYS |= {'readlength', 'totalalns'} # protein summary comment
 INT_KEYS |= {'alns', 'avgcols'} # protein summary lines
 DBL_KEYS = {'depth'}
-
-def parse_summary(summary):
-    prefix = summary.line_prefix_ignore
-    try:
-        with io.StringIO(summary.text) as fs:
-            line = get_next_line(fs, prefix)
-            for name, section in summary.sections.items():
-                # comment is first section, single line
-                if section.is_comment:
-                    section.add(line)
-                    summary.run_id = section.entries[0]['run_id']
-                    line = get_next_line(fs, prefix)
-                    continue
-                while line.startswith(section.parse_keys[0]):
-                    extra_entries = {
-                        'run_id': summary.run_id
-                    }
-                    section.add(line, extra_entries)
-                    line = get_next_line(fs, prefix)
-            try:
-                next(fs)
-                raise ValueError('Did not parse all lines! Check section keys.')
-            except StopIteration:
-                pass # expected
-    except StopIteration:
-        return
 
 def parse_comment_line(line):
     d = dict([pair.split('=') for pair in
@@ -61,7 +35,7 @@ def cast_types(d):
             d[key] = float(d[key])
 
 # hack to remove prefix from each line in psummary
-def get_next_line(fs, prefix):
+def get_next_line(fs: StringIO, prefix: str = None):
     line = next(fs)
     if prefix:
         if not line.startswith(prefix):

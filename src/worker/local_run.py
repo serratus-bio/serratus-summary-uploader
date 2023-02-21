@@ -1,3 +1,6 @@
+# The worker is designed to run on AWS Lambda, but this file can be used to run
+# the worker locally for testing purposes.
+
 import os
 
 os.environ['INDEX_BUCKET'] = 'serratus-summary-uploader'

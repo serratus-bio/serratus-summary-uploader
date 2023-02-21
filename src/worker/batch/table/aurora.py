@@ -23,7 +23,7 @@ class AuroraTable(UploadTable):
         execute_sql(sql)
 
     def upload(self):
-        if not self.entries:
+        if not self.rows:
             return
         engine = create_engine('postgresql+auroradataapi://:@/summary',
             connect_args=dict(aurora_cluster_arn=cluster_arn, secret_arn=secret_arn))

@@ -1,9 +1,8 @@
-from . import Summary
-from .section import SummarySection
-from .download import get_summary_file
+from .file import SummaryFile
+from .file_section import SummaryFileSection
 from botocore.exceptions import ClientError
 
-class NucleotideSummary(Summary):
+class NucleotideSummary(SummaryFile):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,12 +18,12 @@ class NucleotideSummary(Summary):
         prefix = 'summary2/'
         suffix = '.summary'
         try:
-            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
+            self.set_text(bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
 
-class NucleotideSraSection(SummarySection):
+class NucleotideSraSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -40,7 +39,7 @@ class NucleotideSraSection(SummarySection):
         )
 
 
-class NucleotideFamSection(SummarySection):
+class NucleotideFamSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -63,7 +62,7 @@ class NucleotideFamSection(SummarySection):
         )
 
 
-class NucleotideSeqSection(SummarySection):
+class NucleotideSeqSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(

@@ -1,9 +1,9 @@
-from . import Summary
-from .section import SummarySection
+from .file import SummaryFile
+from .file_section import SummaryFileSection
 from .download import get_summary_file
 from botocore.exceptions import ClientError
 
-class ProteinSummary(Summary):
+class ProteinSummary(SummaryFile):
 
     def __init__(self, run_id):
         super().__init__(run_id)
@@ -20,12 +20,12 @@ class ProteinSummary(Summary):
         prefix = 'psummary/'
         suffix = '.psummary'
         try:
-            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
+            self.set_text(bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
 
-class ProteinSraSection(SummarySection):
+class ProteinSraSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -43,7 +43,7 @@ class ProteinSraSection(SummarySection):
         )
 
 
-class ProteinFamSection(SummarySection):
+class ProteinFamSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -59,7 +59,7 @@ class ProteinFamSection(SummarySection):
         )
 
 
-class ProteinGenSection(SummarySection):
+class ProteinGenSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(
@@ -82,7 +82,7 @@ class ProteinGenSection(SummarySection):
         return entry
 
 
-class ProteinSeqSection(SummarySection):
+class ProteinSeqSection(SummaryFileSection):
 
     def __init__(self):
         super().__init__(

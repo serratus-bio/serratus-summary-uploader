@@ -1,10 +1,11 @@
-from .parse import (
+from typing import Dict, List
+from .file_parse import (
     parse_comment_line,
     parse_section_line,
     parse_generic_line
 )
 
-class SummarySection(object):
+class SummaryFileSection(object):
     
     def __init__(self, parse_keys, optional_keys=[], name_map={}, is_comment=False, last_item_any_char=False):
         self.parse_keys = parse_keys
@@ -12,7 +13,7 @@ class SummarySection(object):
         self.name_map = name_map
         self.is_comment = is_comment
         self.last_item_any_char = last_item_any_char
-        self.entries = []
+        self.entries: List[Dict[str, any]] = []
 
     def __repr__(self):
         return f'SummarySection(n={len(self.entries)})'
@@ -34,7 +35,7 @@ class SummarySection(object):
         if set(d) != set(self.parse_keys):
             raise ValueError(f'Expected {set(self.parse_keys)}, got {set(d)}')
 
-    def add(self, line, extra_entries=None):
+    def parse_and_add(self, line, extra_entries=None):
         d = self.parse(line)
         if self.name_map:
             d = {new: d[old] for old, new in self.name_map.items() if new}

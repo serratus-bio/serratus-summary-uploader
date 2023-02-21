@@ -6,7 +6,7 @@ class RdrpBatch(SummaryBatch):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.summary_objects = [RdrpSummary(run_id) for run_id in self.run_ids]
+        self.summary_files = [RdrpSummary(run_id) for run_id in self.run_ids]
         self.tables = {
             'sra': AuroraTable(
                 name='rsra',
