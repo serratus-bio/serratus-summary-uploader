@@ -1,6 +1,6 @@
 from . import Summary
 from .section import SummarySection
-from .download import get_rdrp
+from .download import get_summary_file
 from botocore.exceptions import ClientError
 
 class RdrpSummary(Summary):
@@ -16,8 +16,11 @@ class RdrpSummary(Summary):
         }
 
     def download(self):
+        bucket = 'serratus-bio'
+        prefix = 'rsummary/'
+        suffix = '.psummary'
         try:
-            self.text = get_rdrp(self.run_id)
+            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 

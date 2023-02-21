@@ -1,6 +1,6 @@
 from . import Summary
 from .section import SummarySection
-from .download import get_protein
+from .download import get_summary_file
 from botocore.exceptions import ClientError
 
 class ProteinSummary(Summary):
@@ -16,8 +16,11 @@ class ProteinSummary(Summary):
         }
 
     def download(self):
+        bucket = 'lovelywater'
+        prefix = 'psummary/'
+        suffix = '.psummary'
         try:
-            self.text = get_protein(self.run_id)
+            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 

@@ -1,6 +1,6 @@
 from . import Summary
 from .section import SummarySection
-from .download import get_nucleotide
+from .download import get_summary_file
 from botocore.exceptions import ClientError
 
 class NucleotideSummary(Summary):
@@ -15,8 +15,11 @@ class NucleotideSummary(Summary):
         }
 
     def download(self):
+        bucket = 'lovelywater'
+        prefix = 'summary2/'
+        suffix = '.summary'
         try:
-            self.text = get_nucleotide(self.run_id)
+            self.text = get_summary_file(self.run_id, bucket=bucket, prefix=prefix, suffix=suffix)
         except ClientError as e:
             raise RuntimeError(f'[run_id={self.run_id}] {e!r}') from e
 
