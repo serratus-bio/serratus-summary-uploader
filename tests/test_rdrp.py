@@ -2,7 +2,7 @@
 from batch.rdrp.aurora import RdrpBatch
 
 
-run_ids = ('DRR015317', 'DRR015318', 'DRR015319', 'DRR015320')
+run_ids = ('ERR004293', 'ERR239333', 'ERR239334', 'ERR2393982')
 rdrp_batch = RdrpBatch(run_ids, log_id='test')
 rdrp_batch.download()
 rdrp_batch.parse()
