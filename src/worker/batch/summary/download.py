@@ -18,7 +18,7 @@ def get_protein(run_id):
 
 def get_rdrp(run_id):
     file_key = f'{rdrp_dir}/{run_id}{rdrp_suffix}'
-    return get_file_contents('serratus-bio', file_key)
+    return get_file_contents('lovelywater2', file_key)
 
 def get_file_contents(bucket, file_key):
     url = f'https://s3.amazonaws.com/{bucket}/{file_key}'
